@@ -13,13 +13,13 @@ class ScreenDetector extends StatelessWidget {
       create: (context) => DetectorScreenCubit(),
       child: BlocBuilder<DetectorScreenCubit, DetectorScreenState>(
         builder: (context, state) {
-          return DefaultTabController(
+          return const DefaultTabController(
             length: 2,
             child: Scaffold(
               body: TabBarView(
                 children: [
                   CameraTab(),
-                  const Icon(Icons.list_alt),
+                  Icon(Icons.list_alt),
                 ],
               ),
             ),
