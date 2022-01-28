@@ -11,11 +11,9 @@ StreamController? timer;
 class CameraTab extends StatelessWidget {
   const CameraTab({Key? key}) : super(key: key);
 
-  final CameraApp cameraApp = const CameraApp();
-
   @override
   Widget build(BuildContext context) {
-    return cameraApp;
+    return const CameraApp();
   }
 }
 
@@ -42,33 +40,69 @@ class _CameraAppState extends State<CameraApp> {
       }
 
       await controller!.startImageStream((streamedImage) {
-        int width = streamedImage.width;
-        int height = streamedImage.height;
-        Uint8List rawBytes = streamedImage.planes.last.bytes;
+        if (streamedImage.format.group.name == "yuv420") {
+          int width = streamedImage.width;
+          int height = streamedImage.height;
 
-        int bytesInRow = streamedImage.planes.first.bytesPerRow;
-        int bytesInPixel = streamedImage.planes.first.bytesPerRow ~/ width;
+          Uint8List bytesY = streamedImage.planes.toList()[0].bytes;
+          Uint8List bytesU = streamedImage.planes.toList()[1].bytes;
+          Uint8List bytesV = streamedImage.planes.toList()[2].bytes;
 
-        List<int> pixelBytes = [];
+          // Y
+          int Y = bytesY[width ~/ 2 + height ~/ 2 * width];
+          // U
+          int U = bytesU[width ~/ 2 + (height ~/ 2) ~/ 2 * width];
+          // V
+          int V = bytesV[width ~/ 2 + (height ~/ 2) ~/ 2 * width];
 
-        for (int i = 0; i < bytesInPixel; i++) {
-          pixelBytes.add(rawBytes[
-              height ~/ 2 * bytesInRow + width ~/ 2 * bytesInPixel + i]);
+          int r = (Y + (1.370705 * (V - 128))).toInt();
+          int g = (Y - (0.698001 * (V - 128)) - (0.337633 * (U - 128))).toInt();
+          int b = (Y + (1.732446 * (U - 128))).toInt();
+
+          r = r.clamp(0, 255);
+          g = g.clamp(0, 255);
+          b = b.clamp(0, 255);
+
+          setState(() {
+            pickedColor = Color.fromARGB(
+              /* a */
+              255,
+              /* r */ r,
+              /* g */ g,
+              /* b */ b,
+            );
+          });
+        } else if (streamedImage.format.group.name == "bgra8888") {
+          int width = streamedImage.width;
+          int height = streamedImage.height;
+
+          Uint8List rawBytes = streamedImage.planes.last.bytes;
+          int bytesInRow = streamedImage.planes.first.bytesPerRow;
+          int bytesInPixel = streamedImage.planes.first.bytesPerRow ~/ width;
+
+          List<int> pixelBytes = [];
+
+          for (int i = 0; i < bytesInPixel; i++) {
+            pixelBytes.add(rawBytes[
+                height ~/ 2 * bytesInRow + width ~/ 2 * bytesInPixel + i]);
+          }
+
+          setState(() {
+            // b0   g1   r2   a3
+
+            // a0   r1   g2   b3
+
+            pickedColor = Color.fromARGB(
+              /* a */
+              pixelBytes[3],
+              /* r */ pixelBytes[2],
+              /* g */ pixelBytes[1],
+              /* b */ pixelBytes[0],
+            );
+          });
+        } else {
+          pickedColor = Colors.white;
         }
-
-        setState(() {
-          // b0   g1   r2   a3
-
-          // a0   r1   g2   b3
-
-          pickedColor = Color.fromARGB(
-            /* a */
-            pixelBytes[3],
-            /* r */ pixelBytes[2],
-            /* g */ pixelBytes[1],
-            /* b */ pixelBytes[0],
-          );
-        });
       });
 
       setState(() {});
@@ -114,11 +148,6 @@ class _CameraAppState extends State<CameraApp> {
 }
 
 Widget _colorPreview(Color color) {
-  TextStyle textStyle = const TextStyle(
-    inherit: false,
-    color: Colors.white,
-  );
-
   return Container(
     color: color,
     child: Align(
@@ -127,41 +156,52 @@ Widget _colorPreview(Color color) {
         children: [
           Expanded(
             flex: 1,
-            child: Container(
-              color: Colors.black,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Hex: #${color.hashCode.toRadixString(16)}",
-                    style: textStyle,
-                  ),
-                  Text(
-                    _getClosestColor(color.hashCode.toRadixString(16))
-                        .values
-                        .first,
-                    style: textStyle,
-                  ),
-                ],
-              ),
-            ),
+            child: _colorsInfoRow(color),
           ),
           Expanded(
             flex: 4,
-            child: Align(
-              alignment: Alignment.centerRight,
-              child: FractionallySizedBox(
-                widthFactor: 0.5,
-                child: Container(
-                  color: Color(int.parse(
-                    "ff${_getClosestColor(color.hashCode.toRadixString(16)).keys.first}",
-                    radix: 16,
-                  )),
-                ),
-              ),
-            ),
+            child: _closestColorPreviewContainer(color),
           )
         ],
+      ),
+    ),
+  );
+}
+
+Widget _colorsInfoRow(Color color) {
+  TextStyle textStyle = const TextStyle(
+    inherit: false,
+    color: Colors.white,
+  );
+
+  return Container(
+    color: Colors.black,
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          "Hex: #${color.hashCode.toRadixString(16)}",
+          style: textStyle,
+        ),
+        Text(
+          _getClosestColor(color.hashCode.toRadixString(16)).values.first,
+          style: textStyle,
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _closestColorPreviewContainer(Color color) {
+  return Align(
+    alignment: Alignment.centerRight,
+    child: FractionallySizedBox(
+      widthFactor: 0.5,
+      child: Container(
+        color: Color(int.parse(
+          "ff${_getClosestColor(color.hashCode.toRadixString(16)).keys.first}",
+          radix: 16,
+        )),
       ),
     ),
   );
