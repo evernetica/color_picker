@@ -23,7 +23,7 @@ class _CameraViewWidgetState extends State<CameraViewWidget> {
   void initState() {
     super.initState();
 
-    controller = CameraController(cameras[0], ResolutionPreset.low);
+    controller = CameraController(cameras[0], ResolutionPreset.max);
 
     controller!.initialize().then((_) async {
       if (!mounted) {
@@ -34,67 +34,17 @@ class _CameraViewWidgetState extends State<CameraViewWidget> {
 
       await controller!.startImageStream((streamedImage) {
         if (streamedImage.format.group.name == "yuv420") {
-          int width = streamedImage.width;
-          int height = streamedImage.height;
-
-          Uint8List bytesY = streamedImage.planes.toList()[0].bytes;
-          Uint8List bytesU = streamedImage.planes.toList()[1].bytes;
-          Uint8List bytesV = streamedImage.planes.toList()[2].bytes;
-
-          // Y
-          int Y = bytesY[width ~/ 2 + height ~/ 2 * width];
-          // U
-          int U = bytesU[width ~/ 2 + (height ~/ 2) ~/ 2 * width];
-          // V
-          int V = bytesV[width ~/ 2 + (height ~/ 2) ~/ 2 * width];
-
-          int r = (Y + (1.370705 * (V - 128))).toInt();
-          int g = (Y - (0.698001 * (V - 128)) - (0.337633 * (U - 128))).toInt();
-          int b = (Y + (1.732446 * (U - 128))).toInt();
-
-          r = r.clamp(0, 255);
-          g = g.clamp(0, 255);
-          b = b.clamp(0, 255);
-
           setState(() {
-            pickedColor = Color.fromARGB(
-              /* a */
-              255,
-              /* r */ r,
-              /* g */ g,
-              /* b */ b,
-            );
+            pickedColor = _calculateYuvColor(streamedImage);
           });
         } else if (streamedImage.format.group.name == "bgra8888") {
-          int width = streamedImage.width;
-          int height = streamedImage.height;
-
-          Uint8List rawBytes = streamedImage.planes.last.bytes;
-          int bytesInRow = streamedImage.planes.first.bytesPerRow;
-          int bytesInPixel = streamedImage.planes.first.bytesPerRow ~/ width;
-
-          List<int> pixelBytes = [];
-
-          for (int i = 0; i < bytesInPixel; i++) {
-            pixelBytes.add(rawBytes[
-                height ~/ 2 * bytesInRow + width ~/ 2 * bytesInPixel + i]);
-          }
-
           setState(() {
-            // b0   g1   r2   a3
-
-            // a0   r1   g2   b3
-
-            pickedColor = Color.fromARGB(
-              /* a */
-              pixelBytes[3],
-              /* r */ pixelBytes[2],
-              /* g */ pixelBytes[1],
-              /* b */ pixelBytes[0],
-            );
+            pickedColor = _calculateBrgColor(streamedImage);
           });
         } else {
-          pickedColor = Colors.white;
+          setState(() {
+            pickedColor = Colors.white;
+          });
         }
       });
 
@@ -141,6 +91,60 @@ class _CameraViewWidgetState extends State<CameraViewWidget> {
       ],
     );
   }
+}
+
+Color _calculateYuvColor(CameraImage cameraImage) {
+  int width = cameraImage.width;
+  int height = cameraImage.height;
+
+  Uint8List bytesY = cameraImage.planes.toList()[0].bytes;
+  Uint8List bytesU = cameraImage.planes.toList()[1].bytes;
+  Uint8List bytesV = cameraImage.planes.toList()[2].bytes;
+
+  // Y
+  int Y = bytesY[width ~/ 2 + height ~/ 2 * width];
+  // U
+  int U = bytesU[width ~/ 2 + (height ~/ 2) ~/ 2 * width];
+  // V
+  int V = bytesV[width ~/ 2 + (height ~/ 2) ~/ 2 * width];
+
+  int r = (Y + (1.370705 * (V - 128))).toInt();
+  int g = (Y - (0.698001 * (V - 128)) - (0.337633 * (U - 128))).toInt();
+  int b = (Y + (1.732446 * (U - 128))).toInt();
+
+  r = r.clamp(0, 255);
+  g = g.clamp(0, 255);
+  b = b.clamp(0, 255);
+
+  return Color.fromARGB(255, r, g, b);
+}
+
+Color _calculateBrgColor(CameraImage cameraImage) {
+  int width = cameraImage.width;
+  int height = cameraImage.height;
+
+  Uint8List rawBytes = cameraImage.planes.last.bytes;
+  int bytesInRow = cameraImage.planes.first.bytesPerRow;
+  int bytesInPixel = cameraImage.planes.first.bytesPerRow ~/ width;
+
+  List<int> pixelBytes = [];
+
+  for (int i = 0; i < bytesInPixel; i++) {
+    pixelBytes.add(
+        rawBytes[height ~/ 2 * bytesInRow + width ~/ 2 * bytesInPixel + i]);
+  }
+
+  // b0   g1   r2   a3
+
+  // a0   r1   g2   b3
+
+  return Color.fromARGB(
+    /* a */
+    pixelBytes[3],
+    /* r */ pixelBytes[2],
+    /* g */ pixelBytes[1],
+    /* b */ pixelBytes[0],
+  );
 }
 
 Widget _colorPreview(
