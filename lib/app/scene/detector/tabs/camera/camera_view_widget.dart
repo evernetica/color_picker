@@ -21,6 +21,8 @@ class CameraViewWidget extends StatefulWidget {
 class _CameraViewWidgetState extends State<CameraViewWidget> {
   CameraController? controller;
   Color? pickedColor;
+  double? cameraPreviewOffset;
+  bool isOffsetSet = false;
 
   @override
   void initState() {
@@ -42,15 +44,28 @@ class _CameraViewWidgetState extends State<CameraViewWidget> {
       controller!.startImageStream((streamedImage) {
         if (streamedImage.format.group.name == "yuv420") {
           setState(() {
+            if (!isOffsetSet) {
+              cameraPreviewOffset =
+                  _calculateOffset(0, streamedImage, context, 0.7, 0.05);
+              isOffsetSet = true;
+            }
+
             pickedColor = _calculateYuvColor(streamedImage);
           });
         } else if (streamedImage.format.group.name == "bgra8888") {
           setState(() {
+            if (!isOffsetSet) {
+              cameraPreviewOffset =
+                  _calculateOffset(1, streamedImage, context, 0.7, 0.05);
+              isOffsetSet = true;
+            }
+
             pickedColor = _calculateBrgColor(streamedImage);
           });
         } else {
           setState(() {
             pickedColor = Colors.white;
+            cameraPreviewOffset = 0;
           });
         }
       });
@@ -69,6 +84,8 @@ class _CameraViewWidgetState extends State<CameraViewWidget> {
   Widget build(BuildContext context) {
     if (controller == null) return Container();
 
+    if (cameraPreviewOffset == null) return Container();
+
     if (!controller!.value.isInitialized) return Container();
 
     Color? crosshairColor;
@@ -82,19 +99,34 @@ class _CameraViewWidgetState extends State<CameraViewWidget> {
       );
     }
 
+    ScrollController scrollController = ScrollController(
+        initialScrollOffset: cameraPreviewOffset!, keepScrollOffset: false);
+
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        CameraPreview(
-          controller!,
-          child: Icon(
-            Icons.pages,
-            color: crosshairColor ?? Colors.black,
+        Expanded(
+          flex: 7,
+          child: Center(
+            child: SingleChildScrollView(
+              controller: scrollController,
+              physics: const NeverScrollableScrollPhysics(),
+              child: CameraPreview(
+                controller!,
+                child: Icon(
+                  Icons.pages,
+                  color: crosshairColor ?? Colors.black,
+                ),
+              ),
+            ),
           ),
         ),
         if (pickedColor != null)
           Expanded(
-              child: _colorPreview(
-                  pickedColor!, widget, crosshairColor ?? Colors.black)),
+            flex: 3,
+            child: _colorPreview(
+                pickedColor!, widget, crosshairColor ?? Colors.black),
+          ),
       ],
     );
   }
@@ -152,6 +184,37 @@ Color _calculateBrgColor(CameraImage cameraImage) {
     /* g */ pixelBytes[1],
     /* b */ pixelBytes[0],
   );
+}
+
+double _calculateOffset(
+    int encodingId,
+    CameraImage streamedImage,
+    BuildContext context,
+    double cameraPreviewHeightFactor,
+    double crosshairWidthFactor) {
+  double streamedHeight = 0;
+  double streamedWidth = 0;
+
+  switch (encodingId) {
+    case 0:
+      streamedHeight = streamedImage.width.toDouble();
+      streamedWidth = streamedImage.height.toDouble();
+      break;
+    case 1:
+      streamedHeight = streamedImage.height.toDouble();
+      streamedWidth = streamedImage.width.toDouble();
+      break;
+  }
+
+  double imageHeight =
+      streamedHeight * MediaQuery.of(context).size.width / streamedWidth;
+
+  return imageHeight / 2 -
+      MediaQuery.of(context).size.height * cameraPreviewHeightFactor / 2 +
+      MediaQuery.of(context).size.width *
+          crosshairWidthFactor /
+          2 *
+          cameraPreviewHeightFactor;
 }
 
 Widget _colorPreview(
