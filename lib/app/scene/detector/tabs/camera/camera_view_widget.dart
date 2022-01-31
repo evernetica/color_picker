@@ -5,11 +5,14 @@ import 'package:color_picker/app/scene/detector/tabs/camera/cubit/camera_tab_sta
 import 'package:color_picker/domain/entities/colors_sheet_item_entity.dart';
 import 'package:color_picker/main.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CameraViewWidget extends StatefulWidget {
-  const CameraViewWidget(this.state, {Key? key}) : super(key: key);
+  const CameraViewWidget(this.state, this.isBuggedIphoneModel, {Key? key})
+      : super(key: key);
 
   final CameraTabState state;
+  final bool isBuggedIphoneModel;
 
   @override
   _CameraViewWidgetState createState() => _CameraViewWidgetState();
@@ -23,16 +26,20 @@ class _CameraViewWidgetState extends State<CameraViewWidget> {
   void initState() {
     super.initState();
 
-    controller = CameraController(cameras[0], ResolutionPreset.max);
+    widget.isBuggedIphoneModel
+        ? controller = CameraController(cameras[0], ResolutionPreset.low)
+        : controller = CameraController(cameras[0], ResolutionPreset.max);
 
-    controller!.initialize().then((_) async {
+    controller!.lockCaptureOrientation(DeviceOrientation.portraitUp);
+
+    controller!.initialize().then((_) {
       if (!mounted) {
         return;
       }
 
       colorsSheetListUseCase.getColorsSheetList();
 
-      await controller!.startImageStream((streamedImage) {
+      controller!.startImageStream((streamedImage) {
         if (streamedImage.format.group.name == "yuv420") {
           setState(() {
             pickedColor = _calculateYuvColor(streamedImage);

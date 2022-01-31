@@ -16,7 +16,11 @@ class CameraTab extends StatelessWidget {
     return BlocProvider(
       create: (context) => CameraTabCubit(),
       child: BlocBuilder<CameraTabCubit, CameraTabState>(
-        builder: (context, state) => CameraViewWidget(state),
+        builder: (context, state) => state.isBuggedIphoneModel != null
+            ? CameraViewWidget(state, state.isBuggedIphoneModel!)
+            : const Center(
+                child: CircularProgressIndicator(),
+              ),
       ),
     );
   }
