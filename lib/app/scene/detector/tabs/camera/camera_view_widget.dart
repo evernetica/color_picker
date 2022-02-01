@@ -7,6 +7,7 @@ import 'package:color_picker/domain/entities/colors_sheet_item_entity.dart';
 import 'package:color_picker/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class CameraViewWidget extends StatefulWidget {
   const CameraViewWidget(
@@ -128,19 +129,8 @@ class _CameraViewWidgetState extends State<CameraViewWidget> {
         Expanded(
           flex: 3,
           child: pickedColor != null
-              ? TextButton(
-                  style: TextButton.styleFrom(padding: EdgeInsets.zero),
-                  onPressed: () {
-                    Map<String, String> closestColor = _getClosestColor(
-                        pickedColor.hashCode.toRadixString(16), widget);
-
-                    widget.addColorController.sink.add(ColorsSheetItemEntity(
-                        code: closestColor.keys.first,
-                        name: closestColor.values.first));
-                  },
-                  child: _colorPreview(
-                      pickedColor!, widget, crosshairColor ?? Colors.black),
-                )
+              ? _colorPreview(
+                  pickedColor!, widget, crosshairColor ?? Colors.black)
               : const Center(
                   child: CircularProgressIndicator(),
                 ),
@@ -148,6 +138,14 @@ class _CameraViewWidgetState extends State<CameraViewWidget> {
       ],
     );
   }
+}
+
+Color _codeToColor(String code) {
+  int r = int.parse(code.substring(0, 2), radix: 16);
+  int g = int.parse(code.substring(2, 4), radix: 16);
+  int b = int.parse(code.substring(4, 6), radix: 16);
+
+  return Color.fromARGB(255, r, g, b);
 }
 
 Color _calculateYuvColor(CameraImage cameraImage) {
@@ -239,35 +237,67 @@ Widget _colorPreview(
     Color color, CameraViewWidget widget, Color crosshairColor) {
   return FractionallySizedBox(
     widthFactor: 1,
-    child: Container(
-      color: color,
-      child: widget.state.colorsSheetList.isNotEmpty
-          ? Align(
-              alignment: Alignment.topCenter,
-              child: Column(
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: _colorsInfoRow(color, widget),
+    child: Stack(
+      children: [
+        Container(
+          color: color,
+          child: widget.state.colorsSheetList.isNotEmpty
+              ? Align(
+                  alignment: Alignment.topCenter,
+                  child: Column(
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: _colorsInfoRow(color, widget),
+                      ),
+                      Expanded(
+                        flex: 4,
+                        child: _closestColorPreviewContainer(color, widget),
+                      )
+                    ],
                   ),
-                  Expanded(
-                    flex: 4,
-                    child: _closestColorPreviewContainer(color, widget),
-                  )
-                ],
-              ),
-            )
-          : FractionallySizedBox(
-              widthFactor: 0.2,
-              child: Align(
-                child: AspectRatio(
-                  aspectRatio: 1,
-                  child: CircularProgressIndicator(
-                    color: crosshairColor,
+                )
+              : FractionallySizedBox(
+                  widthFactor: 0.2,
+                  child: Align(
+                    child: AspectRatio(
+                      aspectRatio: 1,
+                      child: CircularProgressIndicator(
+                        color: crosshairColor,
+                      ),
+                    ),
                   ),
                 ),
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: FractionallySizedBox(
+            heightFactor: 0.8,
+            child: TextButton(
+              style: ButtonStyle(
+                overlayColor:
+                    MaterialStateColor.resolveWith((states) => Colors.black54),
               ),
+              onPressed: () {
+                Map<String, String> closestColor =
+                    _getClosestColor(color.hashCode.toRadixString(16), widget);
+
+                widget.addColorController.sink.add(ColorsSheetItemEntity(
+                    code: closestColor.keys.first,
+                    name: closestColor.values.first));
+
+                Fluttertoast.showToast(
+                  msg: "Color saved to favourites",
+                  backgroundColor: _codeToColor(closestColor.keys.first),
+                  textColor: crosshairColor,
+                  gravity: ToastGravity.TOP,
+                );
+              },
+              child: Container(),
             ),
+          ),
+        ),
+      ],
     ),
   );
 }
