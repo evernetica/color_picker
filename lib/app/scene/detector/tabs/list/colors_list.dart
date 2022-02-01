@@ -2,7 +2,8 @@ import 'package:color_picker/domain/entities/colors_sheet_item_entity.dart';
 import 'package:flutter/material.dart';
 
 class ColorsListTab extends StatelessWidget {
-  const ColorsListTab(this._colorsEntityList, this.callback, {Key? key}) : super(key: key);
+  const ColorsListTab(this._colorsEntityList, this.callback, {Key? key})
+      : super(key: key);
 
   final List<ColorsSheetItemEntity> _colorsEntityList;
   final Function(int) callback;
@@ -10,7 +11,7 @@ class ColorsListTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _colorsEntityList.isEmpty
-        ? const Center(child: CircularProgressIndicator())
+        ? const Center(child: Text("Nothing here..."))
         : ListView.builder(
             itemCount: _colorsEntityList.length,
             itemBuilder: (context, index) {
@@ -18,6 +19,7 @@ class ColorsListTab extends StatelessWidget {
                   _colorToSave(_colorsEntityList.elementAt(index).code);
 
               return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 color: index.isEven ? Colors.black12 : Colors.white,
                 child: Row(
                   children: [
@@ -35,12 +37,20 @@ class ColorsListTab extends StatelessWidget {
                         child: Text(
                             "name: ${_colorsEntityList.elementAt(index).name}")),
                     Expanded(
-                      flex: 2,
+                      flex: 1,
                       child: TextButton(
+                        style: ButtonStyle(
+                          foregroundColor: MaterialStateColor.resolveWith(
+                              (states) => Colors.black54),
+                          overlayColor: MaterialStateColor.resolveWith(
+                              (states) => Colors.black12),
+                        ),
                         child: const Icon(
                           Icons.delete_forever,
                         ),
-                        onPressed: () {callback(index);},
+                        onPressed: () {
+                          callback(index);
+                        },
                       ),
                     ),
                   ],
