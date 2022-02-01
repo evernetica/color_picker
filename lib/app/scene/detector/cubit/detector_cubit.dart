@@ -17,6 +17,16 @@ class DetectorScreenCubit extends Cubit<DetectorScreenState> {
     });
   }
 
+  void removeColorFromList(int index) {
+    List<ColorsSheetItemEntity> colorsEntitiesList = [
+      ...state.colorsEntitiesList
+    ];
+
+    colorsEntitiesList.removeAt(index);
+
+    emit(DetectorScreenState(colorsEntitiesList, state.addColorController));
+  }
+
   @override
   Future<void> close() {
     subscription?.cancel();

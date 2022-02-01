@@ -2,9 +2,10 @@ import 'package:color_picker/domain/entities/colors_sheet_item_entity.dart';
 import 'package:flutter/material.dart';
 
 class ColorsListTab extends StatelessWidget {
-  const ColorsListTab(this._colorsEntityList, {Key? key}) : super(key: key);
+  const ColorsListTab(this._colorsEntityList, this.callback, {Key? key}) : super(key: key);
 
   final List<ColorsSheetItemEntity> _colorsEntityList;
+  final Function(int) callback;
 
   @override
   Widget build(BuildContext context) {
@@ -12,12 +13,48 @@ class ColorsListTab extends StatelessWidget {
         ? const Center(child: CircularProgressIndicator())
         : ListView.builder(
             itemCount: _colorsEntityList.length,
-            itemBuilder: (context, index) => Row(
-              children: [
-                Text(
-                    "code: ${_colorsEntityList.elementAt(index).code} name: ${_colorsEntityList.elementAt(index).name} "),
-              ],
-            ),
+            itemBuilder: (context, index) {
+              Color colorToSave =
+                  _colorToSave(_colorsEntityList.elementAt(index).code);
+
+              return Container(
+                color: index.isEven ? Colors.black12 : Colors.white,
+                child: Row(
+                  children: [
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.1,
+                      height: MediaQuery.of(context).size.width * 0.1,
+                      color: colorToSave,
+                    ),
+                    Expanded(
+                        flex: 4,
+                        child: Text(
+                            " code: #${_colorsEntityList.elementAt(index).code} ")),
+                    Expanded(
+                        flex: 5,
+                        child: Text(
+                            "name: ${_colorsEntityList.elementAt(index).name}")),
+                    Expanded(
+                      flex: 2,
+                      child: TextButton(
+                        child: const Icon(
+                          Icons.delete_forever,
+                        ),
+                        onPressed: () {callback(index);},
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
           );
   }
+}
+
+Color _colorToSave(String code) {
+  int r = int.parse(code.substring(0, 2), radix: 16);
+  int g = int.parse(code.substring(2, 4), radix: 16);
+  int b = int.parse(code.substring(4, 6), radix: 16);
+
+  return Color.fromARGB(255, r, g, b);
 }
