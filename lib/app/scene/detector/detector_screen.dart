@@ -20,7 +20,12 @@ class ScreenDetector extends StatelessWidget {
               body: TabBarView(
                 children: [
                   CameraTab(state.addColorController),
-                  ColorsListTab(state.colorsEntitiesList, BlocProvider.of<DetectorScreenCubit>(context).removeColorFromList),
+                  ColorsListTab(
+                      state.colorsEntitiesList,
+                      BlocProvider.of<DetectorScreenCubit>(context)
+                          .removeColorFromList,
+                      BlocProvider.of<DetectorScreenCubit>(context)
+                          .saveFavouritesToFile),
                 ],
               ),
             ),
