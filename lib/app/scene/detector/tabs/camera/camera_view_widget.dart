@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
@@ -8,11 +9,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class CameraViewWidget extends StatefulWidget {
-  const CameraViewWidget(this.state, this.isBuggedIphoneModel, {Key? key})
+  const CameraViewWidget(
+      this.state, this.isBuggedIphoneModel, this.addColorController,
+      {Key? key})
       : super(key: key);
 
   final CameraTabState state;
   final bool isBuggedIphoneModel;
+  final StreamController<ColorsSheetItemEntity> addColorController;
 
   @override
   _CameraViewWidgetState createState() => _CameraViewWidgetState();
@@ -121,12 +125,26 @@ class _CameraViewWidgetState extends State<CameraViewWidget> {
             ),
           ),
         ),
-        if (pickedColor != null)
-          Expanded(
-            flex: 3,
-            child: _colorPreview(
-                pickedColor!, widget, crosshairColor ?? Colors.black),
-          ),
+        Expanded(
+          flex: 3,
+          child: pickedColor != null
+              ? TextButton(
+                  style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                  onPressed: () {
+                    Map<String, String> closestColor = _getClosestColor(
+                        pickedColor.hashCode.toRadixString(16), widget);
+
+                    widget.addColorController.sink.add(ColorsSheetItemEntity(
+                        code: closestColor.keys.first,
+                        name: closestColor.values.first));
+                  },
+                  child: _colorPreview(
+                      pickedColor!, widget, crosshairColor ?? Colors.black),
+                )
+              : const Center(
+                  child: CircularProgressIndicator(),
+                ),
+        ),
       ],
     );
   }
