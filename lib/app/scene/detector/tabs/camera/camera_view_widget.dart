@@ -275,8 +275,8 @@ Widget _colorPreview(
             heightFactor: 0.8,
             child: TextButton(
               style: ButtonStyle(
-                overlayColor:
-                    MaterialStateColor.resolveWith((states) => Colors.black54),
+                overlayColor: MaterialStateColor.resolveWith(
+                    (states) => crosshairColor.withOpacity(0.5)),
               ),
               onPressed: () {
                 Map<String, String> closestColor =
