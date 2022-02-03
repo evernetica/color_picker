@@ -13,12 +13,12 @@ class ColorsListTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _colorsEntityList.isEmpty
-        ? const Center(child: Text("Nothing here..."))
-        : Scaffold(
-            appBar: _favColorsAppBar(),
-            body: _favColorsListView(),
-          );
+    return Scaffold(
+      appBar: _favColorsAppBar(),
+      body: _colorsEntityList.isEmpty
+          ? const Center(child: Text("Nothing here..."))
+          : _favColorsListView(),
+    );
   }
 
   AppBar _favColorsAppBar() {
@@ -44,19 +44,22 @@ class ColorsListTab extends StatelessWidget {
     return ListView.builder(
       itemCount: _colorsEntityList.length,
       itemBuilder: (context, index) {
+        int position = index;
+        index = _colorsEntityList.length - index - 1;
+
         Color colorToSave =
             _colorToSave(_colorsEntityList.elementAt(index).code);
 
-        return _itemFavColorListView(context, colorToSave, index);
+        return _itemFavColorListView(context, colorToSave, index, position);
       },
     );
   }
 
   Widget _itemFavColorListView(
-      BuildContext context, Color colorToSave, int index) {
+      BuildContext context, Color colorToSave, int index, int position) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      color: index.isEven ? Colors.black12 : Colors.white,
+      color: position.isEven ? Colors.black12 : Colors.white,
       child: Row(
         children: [
           Container(
