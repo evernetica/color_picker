@@ -310,20 +310,23 @@ Widget _colorsInfoRow(Color color, CameraViewWidget widget) {
 
   return Container(
     color: Colors.black,
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          "Hex: #${color.hashCode.toRadixString(16)}",
-          style: textStyle,
-        ),
-        Text(
-          _getClosestColor(color.hashCode.toRadixString(16), widget)
-              .values
-              .first,
-          style: textStyle,
-        ),
-      ],
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            "Hex: #${color.hashCode.toRadixString(16).substring(2)}",
+            style: textStyle,
+          ),
+          Text(
+            _getClosestColor(color.hashCode.toRadixString(16), widget)
+                .values
+                .first,
+            style: textStyle,
+          ),
+        ],
+      ),
     ),
   );
 }
