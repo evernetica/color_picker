@@ -16,18 +16,17 @@ class ScreenDetector extends StatelessWidget {
         builder: (context, state) {
           return DefaultTabController(
             length: 2,
-            child: Scaffold(
-              body: TabBarView(
-                children: [
-                  CameraTab(state.addColorController),
-                  ColorsListTab(
-                      state.colorsEntitiesList,
-                      BlocProvider.of<DetectorScreenCubit>(context)
-                          .removeColorFromList,
-                      BlocProvider.of<DetectorScreenCubit>(context)
-                          .saveFavouritesToFile),
-                ],
-              ),
+            child: TabBarView(
+              children: [
+                CameraTab(state.addColorController),
+                ColorsListTab(
+                  state.colorsEntitiesList,
+                  BlocProvider.of<DetectorScreenCubit>(context)
+                      .removeColorFromList,
+                  BlocProvider.of<DetectorScreenCubit>(context)
+                      .saveFavouritesToFile,
+                ),
+              ],
             ),
           );
         },
