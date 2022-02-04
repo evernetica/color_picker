@@ -125,7 +125,7 @@ class _CameraViewWidgetState extends State<CameraViewWidget> {
           flex: 3,
           child: pickedColor != null
               ? _colorPreview(
-                  pickedColor!, widget, crosshairColor ?? Colors.black)
+                  context, pickedColor!, widget, crosshairColor ?? Colors.black)
               : const Center(
                   child: CircularProgressIndicator(),
                 ),
@@ -273,7 +273,7 @@ double _calculateOffset(
 }
 
 Widget _colorPreview(
-    Color color, CameraViewWidget widget, Color crosshairColor) {
+    context, Color color, CameraViewWidget widget, Color crosshairColor) {
   return FractionallySizedBox(
     widthFactor: 1,
     child: Stack(

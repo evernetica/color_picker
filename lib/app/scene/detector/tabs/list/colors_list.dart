@@ -1,5 +1,7 @@
+import 'package:color_picker/app/scene/detector/cubit/detector_cubit.dart';
 import 'package:color_picker/domain/entities/colors_sheet_item_entity.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ColorsListTab extends StatelessWidget {
   const ColorsListTab(this._colorsEntityList, this.removeFromFavourites,
@@ -14,14 +16,14 @@ class ColorsListTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _favColorsAppBar(),
+      appBar: _favColorsAppBar(context),
       body: _colorsEntityList.isEmpty
           ? const Center(child: Text("Nothing here..."))
           : _favColorsListView(),
     );
   }
 
-  AppBar _favColorsAppBar() {
+  AppBar _favColorsAppBar(context) {
     return AppBar(
       leading: TextButton(
         style: ButtonStyle(
@@ -36,6 +38,36 @@ class ColorsListTab extends StatelessWidget {
         },
       ),
       title: const Text("Favourite colors"),
+      flexibleSpace: Align(
+        alignment: Alignment.centerRight,
+        child: FittedBox(
+          fit: BoxFit.fitHeight,
+          child: TextButton(
+            child: Column(
+              children: const [
+                Icon(
+                  Icons.delete_sweep,
+                  color: Colors.white,
+                ),
+                FittedBox(
+                  fit: BoxFit.fitHeight,
+                  child: Text(
+                    "Delete All",
+                    style: TextStyle(
+                      inherit: false,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            onPressed: () {
+              BlocProvider.of<DetectorScreenCubit>(context)
+                  .deleteAllFavourites();
+            },
+          ),
+        ),
+      ),
       backgroundColor: Colors.black,
     );
   }

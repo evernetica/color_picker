@@ -17,6 +17,8 @@ class DetectorScreenCubit extends Cubit<DetectorScreenState> {
       ];
       colorsEntitiesList.add(event);
       emit(DetectorScreenState(colorsEntitiesList, state.addColorController));
+
+      saveFavouritesToFile();
     });
   }
 
@@ -45,5 +47,10 @@ class DetectorScreenCubit extends Cubit<DetectorScreenState> {
   void saveFavouritesToFile() async {
     favouriteColorsFileUseCase
         .saveFavouriteColorsToFile(state.colorsEntitiesList);
+  }
+
+  void deleteAllFavourites() {
+    emit(DetectorScreenState(const [], state.addColorController));
+    saveFavouritesToFile();
   }
 }
