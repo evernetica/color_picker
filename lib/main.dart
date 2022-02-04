@@ -8,6 +8,7 @@ import 'package:color_picker/domain/use_cases/colors_sheet_list_use_case.dart';
 import 'package:color_picker/domain/use_cases/favourite_colors_file_use_case.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:wakelock/wakelock.dart';
 
 late List<CameraDescription> cameras;
 
@@ -21,6 +22,8 @@ Future<void> main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+
+  await Wakelock.enable();
 
   cameras = await availableCameras();
 

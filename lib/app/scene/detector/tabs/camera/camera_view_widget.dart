@@ -96,12 +96,7 @@ class _CameraViewWidgetState extends State<CameraViewWidget> {
     Color? crosshairColor;
 
     if (pickedColor != null) {
-      crosshairColor = Color.fromARGB(
-        pickedColor!.alpha,
-        255 - pickedColor!.red,
-        255 - pickedColor!.green,
-        255 - pickedColor!.blue,
-      );
+      crosshairColor = _getExtremelyInvertedColor(pickedColor!);
     }
 
     ScrollController scrollController = ScrollController(
@@ -138,6 +133,50 @@ class _CameraViewWidgetState extends State<CameraViewWidget> {
       ],
     );
   }
+}
+
+Color _getExtremelyInvertedColor(Color baseColor) {
+  int r = 255 - baseColor.red;
+  int g = 255 - baseColor.green;
+  int b = 255 - baseColor.blue;
+
+  int medium = (r + g + b) ~/ 3;
+
+  r = medium >= 128 ? 255 : 0;
+  g = medium >= 128 ? 255 : 0;
+  b = medium >= 128 ? 255 : 0;
+
+  return Color.fromARGB(
+    baseColor.alpha,
+    r,
+    g,
+    b,
+  );
+}
+
+/// old color inverting method. currently using [_getExtremelyInvertedColor].
+/// may be useful later
+Color _getInvertedColor(Color baseColor) {
+  int r = 255 - baseColor.red;
+  int g = 255 - baseColor.green;
+  int b = 255 - baseColor.blue;
+
+  bool isRedGray = r > 64 && r < 192;
+  bool isGreenGray = g > 64 && g < 192;
+  bool isBlueGray = b > 64 && b < 192;
+
+  if (isRedGray && isGreenGray && isBlueGray) {
+    r = 0;
+    g = 0;
+    b = 0;
+  }
+
+  return Color.fromARGB(
+    baseColor.alpha,
+    r,
+    g,
+    b,
+  );
 }
 
 Color _codeToColor(String code) {
@@ -268,6 +307,26 @@ Widget _colorPreview(
                     ),
                   ),
                 ),
+        ),
+        Align(
+          alignment: Alignment.topCenter,
+          child: FractionallySizedBox(
+            heightFactor: 0.8,
+            widthFactor: 0.6,
+            child: Center(
+              child: FittedBox(
+                fit: BoxFit.fitWidth,
+                child: Text(
+                  "Tap here to save the color",
+                  style: TextStyle(
+                      inherit: false,
+                      color: crosshairColor.withOpacity(0.7),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20.0),
+                ),
+              ),
+            ),
+          ),
         ),
         Align(
           alignment: Alignment.bottomCenter,
