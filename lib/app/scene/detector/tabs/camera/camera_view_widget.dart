@@ -156,6 +156,7 @@ Color _getExtremelyInvertedColor(Color baseColor) {
 
 /// old color inverting method. currently using [_getExtremelyInvertedColor].
 /// may be useful later
+/*
 Color _getInvertedColor(Color baseColor) {
   int r = 255 - baseColor.red;
   int g = 255 - baseColor.green;
@@ -177,7 +178,7 @@ Color _getInvertedColor(Color baseColor) {
     g,
     b,
   );
-}
+}*/
 
 Color _codeToColor(String code) {
   int r = int.parse(code.substring(0, 2), radix: 16);

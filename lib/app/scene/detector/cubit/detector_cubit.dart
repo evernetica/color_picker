@@ -30,12 +30,8 @@ class DetectorScreenCubit extends Cubit<DetectorScreenState> {
     colorsEntitiesList.removeAt(index);
 
     emit(DetectorScreenState(colorsEntitiesList, state.addColorController));
-  }
 
-  @override
-  Future<void> close() {
-    subscription?.cancel();
-    return super.close();
+    saveFavouritesToFile();
   }
 
   void getFavouriteColorsFromFile() async {
@@ -52,5 +48,11 @@ class DetectorScreenCubit extends Cubit<DetectorScreenState> {
   void deleteAllFavourites() {
     emit(DetectorScreenState(const [], state.addColorController));
     saveFavouritesToFile();
+  }
+
+  @override
+  Future<void> close() {
+    subscription?.cancel();
+    return super.close();
   }
 }
