@@ -28,72 +28,47 @@ class ColorInfoCardState extends State<ColorInfoCard> {
         width: MediaQuery.of(context).size.width,
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.only(
-                top: 24.0,
-                left: 24.0,
-                right: 24.0,
-              ),
-              child: AspectRatio(
-                aspectRatio: 1,
-                child: Stack(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          stops: const [0, 0.5, 1],
-                          colors: [
-                            Colors.white,
-                            widget._colorToSave,
-                            Colors.black
-                          ],
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      left: (MediaQuery.of(context).size.width - 48 - 16) *
-                              value /
-                              100 -
-                          2.5,
-                      top: 0,
-                      width: 5,
-                      height: MediaQuery.of(context).size.width - 48 - 16,
-                      child: Container(
-                        decoration: const BoxDecoration(
-                            color: Colors.black26,
-                            border: Border.symmetric(
-                                vertical: BorderSide(
-                              width: 1,
-                              color: Colors.white70,
-                            ))),
-                      ),
-                    ),
-                  ],
+            _colorPalette(),
+            ..._colorPreview(previewColor, invertedColor),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _colorPalette() {
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: 24.0,
+        left: 24.0,
+        right: 24.0,
+      ),
+      child: AspectRatio(
+        aspectRatio: 1,
+        child: Stack(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  stops: const [0, 0.5, 1],
+                  colors: [Colors.white, widget._colorToSave, Colors.black],
                 ),
               ),
             ),
-            Slider(
-              activeColor: Colors.grey,
-              inactiveColor: Colors.grey,
-              min: 0,
-              max: 100,
-              value: value,
-              onChanged: (newValue) {
-                setState(() {
-                  value = newValue;
-                });
-              },
-            ),
-            AspectRatio(
-              aspectRatio: 5 / 1,
+            Positioned(
+              left:
+                  (MediaQuery.of(context).size.width - 48 - 16) * value / 100 -
+                      2.5,
+              top: 0,
+              width: 5,
+              height: MediaQuery.of(context).size.width - 48 - 16,
               child: Container(
-                color: previewColor,
-                child: Center(
-                  child: Text(
-                    _getPercentsString(value),
-                    style: TextStyle(
-                      inherit: false,
-                      color: invertedColor,
+                decoration: const BoxDecoration(
+                  color: Colors.black26,
+                  border: Border.symmetric(
+                    vertical: BorderSide(
+                      width: 1,
+                      color: Colors.white70,
                     ),
                   ),
                 ),
@@ -103,6 +78,38 @@ class ColorInfoCardState extends State<ColorInfoCard> {
         ),
       ),
     );
+  }
+
+  List<Widget> _colorPreview(Color previewColor, Color invertedColor) {
+    return [
+      Slider(
+        activeColor: Colors.grey,
+        inactiveColor: Colors.grey,
+        min: 0,
+        max: 100,
+        value: value,
+        onChanged: (newValue) {
+          setState(() {
+            value = newValue;
+          });
+        },
+      ),
+      AspectRatio(
+        aspectRatio: 5 / 1,
+        child: Container(
+          color: previewColor,
+          child: Center(
+            child: Text(
+              _getPercentsString(value),
+              style: TextStyle(
+                inherit: false,
+                color: invertedColor,
+              ),
+            ),
+          ),
+        ),
+      ),
+    ];
   }
 }
 
