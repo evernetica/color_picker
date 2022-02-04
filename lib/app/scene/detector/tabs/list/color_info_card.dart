@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:color_picker/app/scene/detector/tabs/camera/camera_view_widget.dart';
 import 'package:flutter/material.dart';
 
 class ColorInfoCard extends StatefulWidget {
@@ -18,6 +19,9 @@ class ColorInfoCardState extends State<ColorInfoCard> {
 
   @override
   Widget build(BuildContext context) {
+    Color previewColor = _modifyColor(widget._colorToSave, value);
+    Color invertedColor = getExtremelyInvertedColor(previewColor);
+
     return AspectRatio(
       aspectRatio: 2 / 3,
       child: SizedBox(
@@ -83,7 +87,16 @@ class ColorInfoCardState extends State<ColorInfoCard> {
             AspectRatio(
               aspectRatio: 5 / 1,
               child: Container(
-                color: _modifyColor(widget._colorToSave, value),
+                color: previewColor,
+                child: Center(
+                  child: Text(
+                    _getPercentsString(value),
+                    style: TextStyle(
+                      inherit: false,
+                      color: invertedColor,
+                    ),
+                  ),
+                ),
               ),
             ),
           ],
@@ -104,7 +117,7 @@ Color _modifyColor(Color initialColor, double initialValue) {
       initialColor.hashCode.toRadixString(16).substring(6, 8),
       radix: 16);
 
-  double value = initialValue * 200 / 100 - 100;
+  double value = _getPercentsFromValue(initialValue);
 
   bool isNegative = value < 0;
   double deltaR = _getChannelDelta(initialR, isNegative);
@@ -120,4 +133,13 @@ Color _modifyColor(Color initialColor, double initialValue) {
 
 double _getChannelDelta(int initialValue, bool isNegative) {
   return isNegative ? (255 - initialValue) / 100 : initialValue / 100;
+}
+
+double _getPercentsFromValue(double value) {
+  return value * 200 / 100 - 100;
+}
+
+String _getPercentsString(double value) {
+  int newValue = _getPercentsFromValue(value).round();
+  return newValue > 0 ? "+$newValue%" : "$newValue%";
 }

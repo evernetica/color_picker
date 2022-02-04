@@ -96,7 +96,7 @@ class _CameraViewWidgetState extends State<CameraViewWidget> {
     Color? crosshairColor;
 
     if (pickedColor != null) {
-      crosshairColor = _getExtremelyInvertedColor(pickedColor!);
+      crosshairColor = getExtremelyInvertedColor(pickedColor!);
     }
 
     ScrollController scrollController = ScrollController(
@@ -135,7 +135,7 @@ class _CameraViewWidgetState extends State<CameraViewWidget> {
   }
 }
 
-Color _getExtremelyInvertedColor(Color baseColor) {
+Color getExtremelyInvertedColor(Color baseColor) {
   int r = 255 - baseColor.red;
   int g = 255 - baseColor.green;
   int b = 255 - baseColor.blue;
@@ -154,7 +154,7 @@ Color _getExtremelyInvertedColor(Color baseColor) {
   );
 }
 
-/// old color inverting method. currently using [_getExtremelyInvertedColor].
+/// old color inverting method. currently using [getExtremelyInvertedColor].
 /// may be useful later
 /*
 Color _getInvertedColor(Color baseColor) {
