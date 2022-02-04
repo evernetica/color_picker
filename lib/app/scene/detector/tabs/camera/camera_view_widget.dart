@@ -140,11 +140,11 @@ Color getExtremelyInvertedColor(Color baseColor) {
   int g = 255 - baseColor.green;
   int b = 255 - baseColor.blue;
 
-  int medium = (r + g + b) ~/ 3;
+  int avg = (r + g + b) ~/ 3;
 
-  r = medium >= 128 ? 255 : 0;
-  g = medium >= 128 ? 255 : 0;
-  b = medium >= 128 ? 255 : 0;
+  r = avg >= 128 ? 255 : 0;
+  g = avg >= 128 ? 255 : 0;
+  b = avg >= 128 ? 255 : 0;
 
   return Color.fromARGB(
     baseColor.alpha,
