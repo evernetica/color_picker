@@ -1,4 +1,7 @@
 import 'package:color_picker/app/scene/detector/cubit/detector_cubit.dart';
+import 'package:color_picker/app/scene/detector/tabs/list/color_info_card.dart';
+import 'package:color_picker/app/scene/detector/tabs/list/cubit/colors_list_cubit.dart';
+import 'package:color_picker/app/scene/detector/tabs/list/cubit/colors_list_state.dart';
 import 'package:color_picker/domain/entities/colors_sheet_item_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,11 +18,18 @@ class ColorsListTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _favColorsAppBar(context),
-      body: _colorsEntityList.isEmpty
-          ? const Center(child: Text("Nothing here..."))
-          : _favColorsListView(),
+    return BlocProvider(
+      create: (context) => ColorsListCubit(),
+      child: BlocBuilder<ColorsListCubit, ColorsListState>(
+        builder: (context, state) {
+          return Scaffold(
+            appBar: _favColorsAppBar(context),
+            body: _colorsEntityList.isEmpty
+                ? const Center(child: Text("Nothing here..."))
+                : _favColorsListView(state),
+          );
+        },
+      ),
     );
   }
 
@@ -64,6 +74,8 @@ class ColorsListTab extends StatelessWidget {
             onPressed: () {
               BlocProvider.of<DetectorScreenCubit>(context)
                   .deleteAllFavourites();
+
+              BlocProvider.of<ColorsListCubit>(context).setColorInfoIndex();
             },
           ),
         ),
@@ -72,7 +84,7 @@ class ColorsListTab extends StatelessWidget {
     );
   }
 
-  Widget _favColorsListView() {
+  Widget _favColorsListView(ColorsListState state) {
     return ListView.builder(
       itemCount: _colorsEntityList.length,
       itemBuilder: (context, index) {
@@ -82,16 +94,46 @@ class ColorsListTab extends StatelessWidget {
         Color colorToSave =
             _colorToSave(_colorsEntityList.elementAt(index).code);
 
-        return _itemFavColorListView(context, colorToSave, index, position);
+        return _itemFavColorsListView(
+            context, colorToSave, index, position, state);
       },
     );
   }
 
-  Widget _itemFavColorListView(
-      BuildContext context, Color colorToSave, int index, int position) {
+  Widget _itemFavColorsListView(BuildContext context, Color colorToSave,
+      int index, int position, ColorsListState state) {
+    TextStyle textStyle = const TextStyle(
+      inherit: false,
+      color: Colors.black,
+    );
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       color: position.isEven ? Colors.black12 : Colors.white,
+      child: Column(
+        children: [
+          _colorInfoRow(context, index, colorToSave, textStyle),
+          if (index == state.colorInfoIndex)
+            ColorInfoCard(
+              colorToSave: colorToSave,
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _colorInfoRow(
+      BuildContext context, int index, Color colorToSave, TextStyle textStyle) {
+    return TextButton(
+      onPressed: () {
+        BlocProvider.of<ColorsListCubit>(context)
+            .setColorInfoIndex(index: index);
+      },
+      style: ButtonStyle(
+        padding: MaterialStateProperty.resolveWith((states) => EdgeInsets.zero),
+        overlayColor:
+            MaterialStateColor.resolveWith((states) => Colors.black26),
+      ),
       child: Row(
         children: [
           Container(
@@ -100,12 +142,19 @@ class ColorsListTab extends StatelessWidget {
             color: colorToSave,
           ),
           Expanded(
-              flex: 4,
-              child:
-                  Text(" code: #${_colorsEntityList.elementAt(index).code} ")),
+            flex: 4,
+            child: Text(
+              " code: #${_colorsEntityList.elementAt(index).code} ",
+              style: textStyle,
+            ),
+          ),
           Expanded(
-              flex: 5,
-              child: Text("name: ${_colorsEntityList.elementAt(index).name}")),
+            flex: 5,
+            child: Text(
+              "name: ${_colorsEntityList.elementAt(index).name}",
+              style: textStyle,
+            ),
+          ),
           Expanded(
             flex: 1,
             child: Center(
@@ -123,6 +172,7 @@ class ColorsListTab extends StatelessWidget {
                 ),
                 onPressed: () {
                   removeFromFavourites(index);
+                  BlocProvider.of<ColorsListCubit>(context).setColorInfoIndex();
                 },
               ),
             ),
