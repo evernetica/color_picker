@@ -14,43 +14,10 @@ class ScreenDetector extends StatelessWidget {
       create: (context) => DetectorScreenCubit(),
       child: BlocBuilder<DetectorScreenCubit, DetectorScreenState>(
         builder: (context, state) {
-          return Scaffold(
-            extendBodyBehindAppBar: true,
-            appBar: _detectorScreenAppBar(context, state.currentTab),
-            backgroundColor: Colors.white,
-            body: TabBarDetectorScreen(state),
-          );
+          return TabBarDetectorScreen(state);
         },
       ),
     );
-  }
-
-  AppBar _detectorScreenAppBar(BuildContext context, int tab) {
-    switch (tab) {
-      case 1:
-        return AppBar(
-          leading: Icon(Icons.arrow_back),
-          backgroundColor: Colors.black,
-          title: const Text("Favourites"),
-          flexibleSpace: const Align(
-            alignment: Alignment.bottomCenter,
-            child: Icon(
-              Icons.code,
-              color: Colors.white38,
-            ),
-          ),
-        );
-      default:
-        return AppBar(
-          shadowColor: Colors.transparent,
-          backgroundColor: Colors.black12,
-          title: const Text("Color Picker"),
-          flexibleSpace: const Align(
-            alignment: Alignment.bottomCenter,
-            child: Icon(Icons.code, color: Colors.white38),
-          ),
-        );
-    }
   }
 }
 
@@ -82,19 +49,99 @@ class TabBarDetectorScreenState extends State<TabBarDetectorScreen>
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: TabBarView(
-        controller: controller,
-        children: [
-          CameraTab(widget.state.addColorController),
-          ColorsListTab(
-            widget.state.colorsEntitiesList,
-            BlocProvider.of<DetectorScreenCubit>(context).removeColorFromList,
-            BlocProvider.of<DetectorScreenCubit>(context).saveFavouritesToFile,
+    return Scaffold(
+        extendBodyBehindAppBar: true,
+        appBar: _detectorScreenAppBar(context, widget.state, controller),
+        backgroundColor: Colors.white,
+        body: DefaultTabController(
+          length: 2,
+          child: TabBarView(
+            controller: controller,
+            children: [
+              CameraTab(widget.state.addColorController),
+              ColorsListTab(
+                widget.state.colorsEntitiesList,
+                BlocProvider.of<DetectorScreenCubit>(context)
+                    .removeColorFromList,
+                BlocProvider.of<DetectorScreenCubit>(context)
+                    .saveFavouritesToFile,
+              ),
+            ],
           ),
-        ],
-      ),
-    );
+        ));
   }
+}
+
+AppBar _detectorScreenAppBar(BuildContext context, DetectorScreenState state,
+    TabController? controller) {
+  switch (state.currentTab) {
+    case 1:
+      return appBarListTab(controller);
+    default:
+      return appBarCameraTab();
+  }
+}
+
+Widget _tabIndicator(int currentTab, [int length = 2]) {
+  Widget indicatorCircle(int tab) => Padding(
+        padding: const EdgeInsets.all(2.0),
+        child: AspectRatio(
+          aspectRatio: 1,
+          child: Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: tab == currentTab ? Colors.white70 : Colors.white24,
+            ),
+          ),
+        ),
+      );
+
+  List<Widget> widgets = [];
+  for (int i = 0; i < length; i++) {
+    widgets.add(indicatorCircle(i));
+  }
+
+  return FractionallySizedBox(
+    heightFactor: 0.2,
+    child: IntrinsicWidth(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: widgets,
+      ),
+    ),
+  );
+}
+
+AppBar appBarListTab(TabController? controller) {
+  return AppBar(
+    leading: TextButton(
+        onPressed: () {
+          controller?.animateTo(0);
+        },
+        style: ButtonStyle(
+          foregroundColor:
+              MaterialStateColor.resolveWith((states) => Colors.white),
+          overlayColor:
+              MaterialStateColor.resolveWith((states) => Colors.white30),
+        ),
+        child: const Icon(Icons.arrow_back)),
+    backgroundColor: Colors.black,
+    title: const Text("Favourites"),
+    flexibleSpace: Align(
+      alignment: Alignment.bottomCenter,
+      child: _tabIndicator(1),
+    ),
+  );
+}
+
+AppBar appBarCameraTab() {
+  return AppBar(
+    shadowColor: Colors.transparent,
+    backgroundColor: Colors.black12,
+    title: const Text("Color Picker"),
+    flexibleSpace: Align(
+      alignment: Alignment.bottomCenter,
+      child: _tabIndicator(0),
+    ),
+  );
 }
