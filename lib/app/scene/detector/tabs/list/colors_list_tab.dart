@@ -22,12 +22,9 @@ class ColorsListTab extends StatelessWidget {
       create: (context) => ColorsListCubit(),
       child: BlocBuilder<ColorsListCubit, ColorsListState>(
         builder: (context, state) {
-          return Scaffold(
-            appBar: _favColorsAppBar(context),
-            body: _colorsEntityList.isEmpty
-                ? const Center(child: Text("Nothing here..."))
-                : _favColorsListView(state),
-          );
+          return _colorsEntityList.isNotEmpty
+              ? _favColorsListView(state)
+              : const Center(child: Text("Nothing here..."));
         },
       ),
     );

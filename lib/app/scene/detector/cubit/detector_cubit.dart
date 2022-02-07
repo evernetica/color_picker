@@ -8,7 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class DetectorScreenCubit extends Cubit<DetectorScreenState> {
   StreamSubscription? subscription;
 
-  DetectorScreenCubit() : super(DetectorScreenState(null, null)) {
+  DetectorScreenCubit() : super(DetectorScreenState(null, null, null)) {
     getFavouriteColorsFromFile();
 
     subscription = state.addColorController.stream.listen((event) {
@@ -16,7 +16,8 @@ class DetectorScreenCubit extends Cubit<DetectorScreenState> {
         ...state.colorsEntitiesList
       ];
       colorsEntitiesList.add(event);
-      emit(DetectorScreenState(colorsEntitiesList, state.addColorController));
+      emit(DetectorScreenState(
+          colorsEntitiesList, state.addColorController, state.currentTab));
 
       saveFavouritesToFile();
     });
@@ -29,7 +30,8 @@ class DetectorScreenCubit extends Cubit<DetectorScreenState> {
 
     colorsEntitiesList.removeAt(index);
 
-    emit(DetectorScreenState(colorsEntitiesList, state.addColorController));
+    emit(DetectorScreenState(
+        colorsEntitiesList, state.addColorController, state.currentTab));
 
     saveFavouritesToFile();
   }
@@ -37,7 +39,8 @@ class DetectorScreenCubit extends Cubit<DetectorScreenState> {
   void getFavouriteColorsFromFile() async {
     emit(DetectorScreenState(
         await favouriteColorsFileUseCase.getFavouriteColorsFromFile(),
-        state.addColorController));
+        state.addColorController,
+        state.currentTab));
   }
 
   void saveFavouritesToFile() async {
@@ -46,8 +49,13 @@ class DetectorScreenCubit extends Cubit<DetectorScreenState> {
   }
 
   void deleteAllFavourites() {
-    emit(DetectorScreenState(const [], state.addColorController));
+    emit(DetectorScreenState(
+        const [], state.addColorController, state.currentTab));
     saveFavouritesToFile();
+  }
+
+  void setCurrentTab(int tab) {
+    emit(DetectorScreenState(state.colorsEntitiesList, state.addColorController, tab));
   }
 
   @override
