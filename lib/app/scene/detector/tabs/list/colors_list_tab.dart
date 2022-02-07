@@ -1,4 +1,3 @@
-import 'package:color_picker/app/scene/detector/cubit/detector_cubit.dart';
 import 'package:color_picker/app/scene/detector/tabs/list/color_info_card.dart';
 import 'package:color_picker/app/scene/detector/tabs/list/cubit/colors_list_cubit.dart';
 import 'package:color_picker/app/scene/detector/tabs/list/cubit/colors_list_state.dart';
@@ -27,57 +26,6 @@ class ColorsListTab extends StatelessWidget {
               : const Center(child: Text("Nothing here..."));
         },
       ),
-    );
-  }
-
-  AppBar _favColorsAppBar(context) {
-    return AppBar(
-      leading: TextButton(
-        style: ButtonStyle(
-          foregroundColor:
-              MaterialStateColor.resolveWith((states) => Colors.white),
-          overlayColor:
-              MaterialStateColor.resolveWith((states) => Colors.white12),
-        ),
-        child: const Icon(Icons.save),
-        onPressed: () {
-          saveFavouritesToFile();
-        },
-      ),
-      title: const Text("Favourite colors"),
-      flexibleSpace: Align(
-        alignment: Alignment.centerRight,
-        child: FittedBox(
-          fit: BoxFit.fitHeight,
-          child: TextButton(
-            child: Column(
-              children: const [
-                Icon(
-                  Icons.delete_sweep,
-                  color: Colors.white,
-                ),
-                FittedBox(
-                  fit: BoxFit.fitHeight,
-                  child: Text(
-                    "Delete All",
-                    style: TextStyle(
-                      inherit: false,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            onPressed: () {
-              BlocProvider.of<DetectorScreenCubit>(context)
-                  .deleteAllFavourites();
-
-              BlocProvider.of<ColorsListCubit>(context).setColorInfoIndex();
-            },
-          ),
-        ),
-      ),
-      backgroundColor: Colors.black,
     );
   }
 

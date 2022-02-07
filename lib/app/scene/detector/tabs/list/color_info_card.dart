@@ -178,8 +178,6 @@ Widget colorCodePresenter(List<String> channelsNames, List<int> channelsValues,
     throw Exception("channelsNames.length != channelsValues.length");
   }
 
-  print("${modelName} first = ${channelsValues[0]}");
-
   return Padding(
     padding: const EdgeInsets.all(8.0),
     child: Column(
