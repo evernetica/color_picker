@@ -131,6 +131,29 @@ AppBar appBarListTab(TabController? controller) {
       alignment: Alignment.bottomCenter,
       child: _tabIndicator(1),
     ),
+    actions: [
+      Padding(
+        padding: const EdgeInsets.only(right: 16.0),
+        child: PopupMenuButton(
+          child: const Icon(Icons.menu),
+          itemBuilder: (context) => [
+            PopupMenuItem(
+              onTap: () {},
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: const [
+                  Icon(
+                    Icons.delete_sweep,
+                    color: Colors.black,
+                  ),
+                  Text("Delete All"),
+                ],
+              ),
+            ),
+          ],
+        ),
+      )
+    ],
   );
 }
 
