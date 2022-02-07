@@ -47,6 +47,10 @@ class _CameraViewWidgetState extends State<CameraViewWidget> {
       colorsSheetListUseCase.getColorsSheetList();
 
       controller!.startImageStream((streamedImage) {
+        if (!mounted) {
+          return;
+        }
+
         if (streamedImage.format.group.name == "yuv420") {
           setState(() {
             if (!isOffsetSet) {
