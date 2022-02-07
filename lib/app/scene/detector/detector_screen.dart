@@ -138,7 +138,10 @@ AppBar appBarListTab(TabController? controller) {
           child: const Icon(Icons.menu),
           itemBuilder: (context) => [
             PopupMenuItem(
-              onTap: () {},
+              onTap: () {
+                BlocProvider.of<DetectorScreenCubit>(context)
+                    .deleteAllFavourites();
+              },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: const [
