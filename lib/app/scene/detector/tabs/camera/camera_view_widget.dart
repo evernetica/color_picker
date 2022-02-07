@@ -282,6 +282,7 @@ Widget _colorPreview(
   return FractionallySizedBox(
     widthFactor: 1,
     child: Stack(
+      fit: StackFit.expand,
       children: [
         Container(
           color: color,
