@@ -57,7 +57,8 @@ class ColorsListTab extends StatelessWidget {
       color: position.isEven ? Colors.black12 : Colors.white,
       child: Column(
         children: [
-          _colorInfoRow(context, index, colorToSave, textStyle),
+          _colorInfoRow(context, index, colorToSave, textStyle,
+              index == state.colorInfoIndex),
           if (index == state.colorInfoIndex)
             ColorInfoCard(
               colorToSave: colorToSave,
@@ -67,8 +68,8 @@ class ColorsListTab extends StatelessWidget {
     );
   }
 
-  Widget _colorInfoRow(
-      BuildContext context, int index, Color colorToSave, TextStyle textStyle) {
+  Widget _colorInfoRow(BuildContext context, int index, Color colorToSave,
+      TextStyle textStyle, bool isCardOpened) {
     return TextButton(
       onPressed: () {
         BlocProvider.of<ColorsListCubit>(context)
@@ -98,6 +99,17 @@ class ColorsListTab extends StatelessWidget {
             child: Text(
               "name: ${_colorsEntityList.elementAt(index).name}",
               style: textStyle,
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: FittedBox(
+              child: Icon(
+                isCardOpened
+                    ? Icons.arrow_drop_up_rounded
+                    : Icons.arrow_drop_down_rounded,
+                color: Colors.black54,
+              ),
             ),
           ),
           Expanded(
