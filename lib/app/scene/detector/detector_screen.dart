@@ -130,29 +130,29 @@ AppBar appBarListTab(TabController? controller) {
       child: _tabIndicator(1),
     ),
     actions: [
-      Padding(
-        padding: const EdgeInsets.only(right: 16.0),
-        child: PopupMenuButton(
-          child: const Icon(Icons.menu),
-          itemBuilder: (context) => [
-            PopupMenuItem(
-              onTap: () {
-                BlocProvider.of<DetectorScreenCubit>(context)
-                    .deleteAllFavourites();
-              },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: const [
-                  Icon(
-                    Icons.delete_sweep,
-                    color: Colors.black,
-                  ),
-                  Text("Delete All"),
-                ],
-              ),
-            ),
-          ],
+      PopupMenuButton(
+        child: const Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Icon(Icons.menu),
         ),
+        itemBuilder: (context) => [
+          PopupMenuItem(
+            onTap: () {
+              BlocProvider.of<DetectorScreenCubit>(context)
+                  .deleteAllFavourites();
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: const [
+                Icon(
+                  Icons.delete_sweep,
+                  color: Colors.black,
+                ),
+                Text("Delete All"),
+              ],
+            ),
+          ),
+        ],
       )
     ],
   );
