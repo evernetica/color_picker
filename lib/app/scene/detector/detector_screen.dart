@@ -82,7 +82,7 @@ AppBar _detectorScreenAppBar(BuildContext context, DetectorScreenState state,
 
 Widget _tabIndicator(int currentTab, [int length = 2]) {
   Widget indicatorCircle(int tab) => Padding(
-        padding: const EdgeInsets.all(2.0),
+        padding: const EdgeInsets.all(4.0),
         child: AspectRatio(
           aspectRatio: 1,
           child: Container(
@@ -100,7 +100,7 @@ Widget _tabIndicator(int currentTab, [int length = 2]) {
   }
 
   return FractionallySizedBox(
-    heightFactor: 0.2,
+    heightFactor: 0.25,
     child: IntrinsicWidth(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -144,8 +144,7 @@ Widget _popupMenuButton() {
     itemBuilder: (context) => [
       PopupMenuItem(
         onTap: () {
-          BlocProvider.of<DetectorScreenCubit>(context)
-              .deleteAllFavourites();
+          BlocProvider.of<DetectorScreenCubit>(context).deleteAllFavourites();
         },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
