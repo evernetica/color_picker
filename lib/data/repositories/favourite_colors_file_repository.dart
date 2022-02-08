@@ -13,15 +13,19 @@ class FavouriteColorsFileRepositoryImpl extends IFavouriteColorsFileRepository {
     Directory directory = await getApplicationDocumentsDirectory();
     String path = directory.path;
 
-    File file = File('$path/favouriteColors.json');
+    try {
+      File file = File('$path/favouriteColors.json');
 
-    String contents = await file.readAsString();
+      String contents = await file.readAsString();
 
-    Map<String, dynamic> colorsMap = jsonDecode(contents);
+      Map<String, dynamic> colorsMap = jsonDecode(contents);
 
-    for (String key in colorsMap.keys) {
-      listFromFile
-          .add(ColorsSheetItemEntity(code: key, name: colorsMap[key] ?? ""));
+      for (String key in colorsMap.keys) {
+        listFromFile
+            .add(ColorsSheetItemEntity(code: key, name: colorsMap[key] ?? ""));
+      }
+    } catch (ex) {
+      return [];
     }
 
     return listFromFile;

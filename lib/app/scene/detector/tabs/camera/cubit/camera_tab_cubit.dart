@@ -53,6 +53,9 @@ class CameraTabCubit extends Cubit<CameraTabState> {
         return;
       }
     }
+
+    emit(CameraTabState(
+        colorsSheetList: state.colorsSheetList, isBuggedIphoneModel: false));
   }
 
   void loadDefaultColors() async {
