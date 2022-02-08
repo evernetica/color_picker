@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:camera/camera.dart';
 import 'package:color_picker/app/app_root.dart';
-import 'package:color_picker/data/repositories/colors_sheet_list_git_repository.dart';
+import 'package:color_picker/data/repositories/colors_sheet_list_offline_repository.dart';
 import 'package:color_picker/data/repositories/favourite_colors_file_repository.dart';
 import 'package:color_picker/domain/use_cases/colors_sheet_list_use_case.dart';
 import 'package:color_picker/domain/use_cases/favourite_colors_file_use_case.dart';
@@ -28,7 +28,7 @@ Future<void> main() async {
   cameras = await availableCameras();
 
   colorsSheetListUseCase =
-      ColorsSheetListUseCase(ColorsSheetListGitRepositoryImpl());
+      ColorsSheetListUseCase(ColorsSheetListOfflineRepositoryImpl());
   favouriteColorsFileUseCase =
       FavouriteColorsFileUseCase(FavouriteColorsFileRepositoryImpl());
 
