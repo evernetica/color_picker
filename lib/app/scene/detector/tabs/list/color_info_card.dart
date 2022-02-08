@@ -131,6 +131,7 @@ class ColorInfoCardState extends State<ColorInfoCard> {
                     Flexible(
                       child: IntrinsicWidth(
                         child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             colorCodePresenter(
                                 ["R", "G", "B"],
@@ -149,6 +150,7 @@ class ColorInfoCardState extends State<ColorInfoCard> {
                     Flexible(
                       child: IntrinsicWidth(
                         child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             colorCodePresenter(["L", "A", "B"], labColors,
                                 "LAB (daylight)", "", true),
