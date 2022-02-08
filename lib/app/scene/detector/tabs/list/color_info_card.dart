@@ -198,13 +198,21 @@ Widget colorCodePresenter(List<String> channelsNames, List<int> channelsValues,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             for (int i = 0; i < channelsNames.length; i++)
-              Text(
-                "${channelsNames[i]}: " +
-                    ("${channelsValues[i]} ").padLeft(4, "0"),
-                style: const TextStyle(
-                  fontFeatures: [
-                    FontFeature.tabularFigures(),
-                  ],
+              Expanded(
+                child: AspectRatio(
+                  aspectRatio: 1,
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "${channelsNames[i]}: " +
+                          ("${channelsValues[i]} "),
+                      style: const TextStyle(
+                        fontFeatures: [
+                          FontFeature.tabularFigures(),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
               ),
             TextButton(
