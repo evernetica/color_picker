@@ -44,8 +44,6 @@ class _CameraViewWidgetState extends State<CameraViewWidget> {
         return;
       }
 
-      colorsSheetListUseCase.getColorsSheetList();
-
       controller!.startImageStream((streamedImage) {
         if (!mounted) {
           return;
@@ -210,13 +208,15 @@ Widget _colorPreview(
         Align(
           alignment: Alignment.topCenter,
           child: FractionallySizedBox(
-            heightFactor: 0.8,
+            heightFactor: widget.state.colorsSheetList.isNotEmpty ? 0.8 : 0.2,
             widthFactor: 0.6,
             child: Center(
               child: FittedBox(
                 fit: BoxFit.fitWidth,
                 child: Text(
-                  "Tap here to save the color",
+                  widget.state.colorsSheetList.isNotEmpty
+                      ? "Tap here to save the color"
+                      : "Can not establish Internet connection.",
                   style: TextStyle(
                       inherit: false,
                       color: crosshairColor.withOpacity(0.7),
@@ -236,23 +236,25 @@ Widget _colorPreview(
                 overlayColor: MaterialStateColor.resolveWith(
                     (states) => crosshairColor.withOpacity(0.5)),
               ),
-              onPressed: () {
-                Map<String, String> closestColor =
-                    ColorOperations.getClosestColor(
-                        color.hashCode.toRadixString(16), widget.state);
+              onPressed: widget.state.colorsSheetList.isNotEmpty
+                  ? () {
+                      Map<String, String> closestColor =
+                          ColorOperations.getClosestColor(
+                              color.hashCode.toRadixString(16), widget.state);
 
-                widget.addColorController.sink.add(ColorsSheetItemEntity(
-                    code: closestColor.keys.first,
-                    name: closestColor.values.first));
+                      widget.addColorController.sink.add(ColorsSheetItemEntity(
+                          code: closestColor.keys.first,
+                          name: closestColor.values.first));
 
-                Fluttertoast.showToast(
-                  msg: "Color saved to favourites",
-                  backgroundColor:
-                      ColorOperations.codeToColor(closestColor.keys.first),
-                  textColor: crosshairColor,
-                  gravity: ToastGravity.TOP,
-                );
-              },
+                      Fluttertoast.showToast(
+                        msg: "Color saved to favourites",
+                        backgroundColor: ColorOperations.codeToColor(
+                            closestColor.keys.first),
+                        textColor: crosshairColor,
+                        gravity: ToastGravity.TOP,
+                      );
+                    }
+                  : null,
               child: Container(),
             ),
           ),

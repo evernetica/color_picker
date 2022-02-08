@@ -1,11 +1,10 @@
 import 'package:color_picker/app/scene/detector/tabs/camera/cubit/camera_tab_state.dart';
-import 'package:color_picker/main.dart';
+import 'package:color_picker/domain/entities/colors_sheet_item_entity.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CameraTabCubit extends Cubit<CameraTabState> {
   CameraTabCubit() : super(const CameraTabState()) {
-    loadDefaultColors();
     checkIfBuggedIphone();
   }
 
@@ -58,9 +57,9 @@ class CameraTabCubit extends Cubit<CameraTabState> {
         colorsSheetList: state.colorsSheetList, isBuggedIphoneModel: false));
   }
 
-  void loadDefaultColors() async {
+  void loadDefaultColors(List<ColorsSheetItemEntity> colorsSheetList) {
     emit(CameraTabState(
-        colorsSheetList: await colorsSheetListUseCase.getColorsSheetList(),
+        colorsSheetList: colorsSheetList,
         isBuggedIphoneModel: state.isBuggedIphoneModel));
   }
 }

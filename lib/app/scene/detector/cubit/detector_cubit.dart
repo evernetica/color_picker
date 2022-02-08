@@ -8,7 +8,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class DetectorScreenCubit extends Cubit<DetectorScreenState> {
   StreamSubscription? subscription;
 
-  DetectorScreenCubit() : super(DetectorScreenState(null, null, null)) {
+  DetectorScreenCubit() : super(DetectorScreenState()) {
+    getDefaultColorsSheetList();
+
     getFavouriteColorsFromFile();
 
     subscription = state.addColorController.stream.listen((event) {
@@ -17,10 +19,34 @@ class DetectorScreenCubit extends Cubit<DetectorScreenState> {
       ];
       colorsEntitiesList.add(event);
       emit(DetectorScreenState(
-          colorsEntitiesList, state.addColorController, state.currentTab));
+        colorsEntitiesList: colorsEntitiesList,
+        addColorController: state.addColorController,
+        currentTab: state.currentTab,
+        colorsSheetList: state.colorsSheetList,
+      ));
 
       saveFavouritesToFile();
     });
+  }
+
+  void getDefaultColorsSheetList() async {
+    List<ColorsSheetItemEntity> colorsSheetList = [];
+
+    while (colorsSheetList.isEmpty) {
+      try {
+        colorsSheetList = await colorsSheetListUseCase.getColorsSheetList();
+      } catch (ex) {
+        await Future.delayed(const Duration(seconds: 3));
+        continue;
+      }
+    }
+
+    emit(DetectorScreenState(
+      colorsEntitiesList: state.colorsEntitiesList,
+      addColorController: state.addColorController,
+      currentTab: state.currentTab,
+      colorsSheetList: colorsSheetList,
+    ));
   }
 
   void removeColorFromList(int index) {
@@ -31,16 +57,23 @@ class DetectorScreenCubit extends Cubit<DetectorScreenState> {
     colorsEntitiesList.removeAt(index);
 
     emit(DetectorScreenState(
-        colorsEntitiesList, state.addColorController, state.currentTab));
+      colorsEntitiesList: colorsEntitiesList,
+      addColorController: state.addColorController,
+      currentTab: state.currentTab,
+      colorsSheetList: state.colorsSheetList,
+    ));
 
     saveFavouritesToFile();
   }
 
   void getFavouriteColorsFromFile() async {
     emit(DetectorScreenState(
-        await favouriteColorsFileUseCase.getFavouriteColorsFromFile(),
-        state.addColorController,
-        state.currentTab));
+      colorsEntitiesList:
+          await favouriteColorsFileUseCase.getFavouriteColorsFromFile(),
+      addColorController: state.addColorController,
+      currentTab: state.currentTab,
+      colorsSheetList: state.colorsSheetList,
+    ));
   }
 
   void saveFavouritesToFile() async {
@@ -50,12 +83,21 @@ class DetectorScreenCubit extends Cubit<DetectorScreenState> {
 
   void deleteAllFavourites() {
     emit(DetectorScreenState(
-        const [], state.addColorController, state.currentTab));
+      colorsEntitiesList: const [],
+      addColorController: state.addColorController,
+      currentTab: state.currentTab,
+      colorsSheetList: state.colorsSheetList,
+    ));
     saveFavouritesToFile();
   }
 
   void setCurrentTab(int tab) {
-    emit(DetectorScreenState(state.colorsEntitiesList, state.addColorController, tab));
+    emit(DetectorScreenState(
+      colorsEntitiesList: state.colorsEntitiesList,
+      addColorController: state.addColorController,
+      currentTab: tab,
+      colorsSheetList: state.colorsSheetList,
+    ));
   }
 
   @override
