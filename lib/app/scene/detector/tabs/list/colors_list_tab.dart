@@ -82,62 +82,84 @@ class ColorsListTab extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Container(
-            width: MediaQuery.of(context).size.width * 0.1,
-            height: MediaQuery.of(context).size.width * 0.1,
-            color: colorToSave,
-          ),
+          _colorIcon(context, colorToSave),
           Expanded(
             flex: 4,
-            child: Text(
-              " code: #${_colorsEntityList.elementAt(index).code} ",
-              style: textStyle,
-            ),
+            child: _colorCodeText(_colorsEntityList, index, textStyle),
           ),
           Expanded(
             flex: 5,
-            child: Text(
-              "name: ${_colorsEntityList.elementAt(index).name}",
-              style: textStyle,
-            ),
+            child: _colorNameText(_colorsEntityList, index, textStyle),
           ),
           Expanded(
             flex: 1,
-            child: FittedBox(
-              child: Icon(
-                isCardOpened
-                    ? Icons.arrow_drop_up_rounded
-                    : Icons.arrow_drop_down_rounded,
-                color: Colors.black54,
-              ),
-            ),
+            child: _expandCardIcon(isCardOpened),
           ),
           Expanded(
             flex: 1,
-            child: Center(
-              child: TextButton(
-                style: ButtonStyle(
-                  padding: MaterialStateProperty.all<EdgeInsets>(
-                      const EdgeInsets.all(0)),
-                  foregroundColor: MaterialStateColor.resolveWith(
-                      (states) => Colors.black54),
-                  overlayColor: MaterialStateColor.resolveWith(
-                      (states) => Colors.black12),
-                ),
-                child: const Icon(
-                  Icons.delete_forever,
-                ),
-                onPressed: () {
-                  removeFromFavourites(index);
-                  BlocProvider.of<ColorsListCubit>(context).setColorInfoIndex();
-                },
-              ),
-            ),
+            child: _deleteColorButton(context, removeFromFavourites, index),
           ),
         ],
       ),
     );
   }
+}
+
+Widget _colorIcon(BuildContext context, Color color) {
+  return Container(
+    width: MediaQuery.of(context).size.width * 0.1,
+    height: MediaQuery.of(context).size.width * 0.1,
+    color: color,
+  );
+}
+
+Widget _colorCodeText(List<ColorsSheetItemEntity> colorsEntityList, int index,
+    TextStyle textStyle) {
+  return Text(
+    " code: #${colorsEntityList.elementAt(index).code} ",
+    style: textStyle,
+  );
+}
+
+Widget _colorNameText(List<ColorsSheetItemEntity> colorsEntityList, int index,
+    TextStyle textStyle) {
+  return Text(
+    "name: ${colorsEntityList.elementAt(index).name}",
+    style: textStyle,
+  );
+}
+
+Widget _expandCardIcon(bool isCardOpened) {
+  return FittedBox(
+    child: Icon(
+      isCardOpened
+          ? Icons.arrow_drop_up_rounded
+          : Icons.arrow_drop_down_rounded,
+      color: Colors.black54,
+    ),
+  );
+}
+
+Widget _deleteColorButton(
+    BuildContext context, Function(int index) callback, int index) {
+  return Center(
+    child: TextButton(
+      style: ButtonStyle(
+        padding: MaterialStateProperty.all<EdgeInsets>(const EdgeInsets.all(0)),
+        foregroundColor:
+            MaterialStateColor.resolveWith((states) => Colors.black54),
+        overlayColor:
+            MaterialStateColor.resolveWith((states) => Colors.black12),
+      ),
+      child: const Icon(
+        Icons.delete_forever,
+      ),
+      onPressed: () {
+        callback(index);
+        BlocProvider.of<ColorsListCubit>(context).setColorInfoIndex();
+      },
+    ),
+  );
 }
 
 Color _colorToSave(String code) {

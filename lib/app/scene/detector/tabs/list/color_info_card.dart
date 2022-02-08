@@ -185,70 +185,82 @@ Widget colorCodePresenter(List<String> channelsNames, List<int> channelsValues,
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "$modelName:",
-          style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 22.0,
-              fontFeatures: [
-                FontFeature.tabularFigures(),
-              ]),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            for (int i = 0; i < channelsNames.length; i++)
-              Expanded(
-                child: AspectRatio(
-                  aspectRatio: 1,
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "${channelsNames[i]}: " +
-                          ("${channelsValues[i]} "),
-                      style: const TextStyle(
-                        fontFeatures: [
-                          FontFeature.tabularFigures(),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            TextButton(
-              style: buttonStyle,
-              onPressed: () {
-                _copyChannelsValues(channelsValues);
-              },
-              child: const Icon(Icons.copy),
-            ),
-          ],
-        ),
-        Visibility(
-          visible: code.isNotEmpty,
-          maintainSize: maintainSize,
-          maintainAnimation: maintainSize,
-          maintainState: maintainSize,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Text(
-                "#$code",
+        _colorModelNameRow(modelName),
+        _colorChannelsCodesRow(channelsNames, channelsValues, buttonStyle),
+        _colorCodeRow(code, maintainSize, buttonStyle),
+      ],
+    ),
+  );
+}
+
+Widget _colorModelNameRow(String modelName) {
+  return Text(
+    "$modelName:",
+    style: const TextStyle(
+        fontWeight: FontWeight.bold,
+        fontSize: 22.0,
+        fontFeatures: [
+          FontFeature.tabularFigures(),
+        ]),
+  );
+}
+
+Widget _colorChannelsCodesRow(List<String> channelsNames,
+    List<int> channelsValues, ButtonStyle buttonStyle) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.end,
+    children: [
+      for (int i = 0; i < channelsNames.length; i++)
+        Expanded(
+          child: AspectRatio(
+            aspectRatio: 1,
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "${channelsNames[i]}: " + ("${channelsValues[i]} "),
                 style: const TextStyle(
                   fontFeatures: [
                     FontFeature.tabularFigures(),
                   ],
                 ),
               ),
-              TextButton(
-                style: buttonStyle,
-                onPressed: () {
-                  _copyHashCode(code);
-                },
-                child: const Icon(Icons.copy),
-              ),
+            ),
+          ),
+        ),
+      TextButton(
+        style: buttonStyle,
+        onPressed: () {
+          _copyChannelsValues(channelsValues);
+        },
+        child: const Icon(Icons.copy),
+      ),
+    ],
+  );
+}
+
+Widget _colorCodeRow(String code, bool maintainSize, ButtonStyle buttonStyle) {
+  return Visibility(
+    visible: code.isNotEmpty,
+    maintainSize: maintainSize,
+    maintainAnimation: maintainSize,
+    maintainState: maintainSize,
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Text(
+          "#$code",
+          style: const TextStyle(
+            fontFeatures: [
+              FontFeature.tabularFigures(),
             ],
           ),
+        ),
+        TextButton(
+          style: buttonStyle,
+          onPressed: () {
+            _copyHashCode(code);
+          },
+          child: const Icon(Icons.copy),
         ),
       ],
     ),

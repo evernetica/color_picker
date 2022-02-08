@@ -44,59 +44,20 @@ class _CameraViewWidgetState extends State<CameraViewWidget> {
         return;
       }
 
-      controller!.startImageStream((streamedImage) {
-        if (!mounted) {
-          return;
-        }
-
-        if (streamedImage.format.group.name == "yuv420") {
-          setState(() {
-            if (!isOffsetSet) {
-              cameraPreviewOffset =
-                  _calculateOffset(0, streamedImage, context, 0.7, 0.05);
-              isOffsetSet = true;
-            }
-
-            pickedColor = ColorOperations.calculateYuvColor(streamedImage);
-          });
-        } else if (streamedImage.format.group.name == "bgra8888") {
-          setState(() {
-            if (!isOffsetSet) {
-              cameraPreviewOffset =
-                  _calculateOffset(1, streamedImage, context, 0.7, 0.05);
-              isOffsetSet = true;
-            }
-
-            pickedColor = ColorOperations.calculateBrgColor(streamedImage);
-          });
-        } else {
-          setState(() {
-            pickedColor = Colors.white;
-            cameraPreviewOffset = 0;
-          });
-        }
-      });
+      controller!.startImageStream(
+          (streamedImage) => _imageStreamListener(streamedImage));
 
       setState(() {});
     });
   }
 
   @override
-  void dispose() {
-    controller?.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     if (controller == null) return Container();
-
     if (cameraPreviewOffset == null) return Container();
-
     if (!controller!.value.isInitialized) return Container();
 
     Color? crosshairColor;
-
     if (pickedColor != null) {
       crosshairColor = ColorOperations.getExtremelyInvertedColor(pickedColor!);
     }
@@ -134,6 +95,45 @@ class _CameraViewWidgetState extends State<CameraViewWidget> {
         ),
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    controller?.dispose();
+    super.dispose();
+  }
+
+  void _imageStreamListener(CameraImage streamedImage) {
+    if (!mounted) {
+      return;
+    }
+
+    if (streamedImage.format.group.name == "yuv420") {
+      setState(() {
+        if (!isOffsetSet) {
+          cameraPreviewOffset =
+              _calculateOffset(0, streamedImage, context, 0.7, 0.05);
+          isOffsetSet = true;
+        }
+
+        pickedColor = ColorOperations.calculateYuvColor(streamedImage);
+      });
+    } else if (streamedImage.format.group.name == "bgra8888") {
+      setState(() {
+        if (!isOffsetSet) {
+          cameraPreviewOffset =
+              _calculateOffset(1, streamedImage, context, 0.7, 0.05);
+          isOffsetSet = true;
+        }
+
+        pickedColor = ColorOperations.calculateBrgColor(streamedImage);
+      });
+    } else {
+      setState(() {
+        pickedColor = Colors.white;
+        cameraPreviewOffset = 0;
+      });
+    }
   }
 }
 
@@ -175,91 +175,105 @@ Widget _colorPreview(
     child: Stack(
       fit: StackFit.expand,
       children: [
-        Container(
-          color: color,
-          child: widget.state.colorsSheetList.isNotEmpty
-              ? Align(
-                  alignment: Alignment.topCenter,
-                  child: Column(
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: _colorsInfoRow(color, widget),
-                      ),
-                      Expanded(
-                        flex: 4,
-                        child: _closestColorPreviewContainer(color, widget),
-                      )
-                    ],
-                  ),
-                )
-              : FractionallySizedBox(
-                  widthFactor: 0.2,
-                  child: Align(
-                    child: AspectRatio(
-                      aspectRatio: 1,
-                      child: CircularProgressIndicator(
-                        color: crosshairColor,
-                      ),
-                    ),
-                  ),
-                ),
-        ),
-        Align(
-          alignment: Alignment.topCenter,
-          child: FractionallySizedBox(
-            heightFactor: widget.state.colorsSheetList.isNotEmpty ? 0.8 : 0.2,
-            widthFactor: 0.6,
-            child: Center(
-              child: FittedBox(
-                fit: BoxFit.fitWidth,
-                child: Text(
-                  widget.state.colorsSheetList.isNotEmpty
-                      ? "Tap here to save the color"
-                      : "Can not establish Internet connection.",
-                  style: TextStyle(
-                      inherit: false,
-                      color: crosshairColor.withOpacity(0.7),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20.0),
-                ),
-              ),
-            ),
-          ),
-        ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: FractionallySizedBox(
-            heightFactor: 0.8,
-            child: TextButton(
-              style: ButtonStyle(
-                overlayColor: MaterialStateColor.resolveWith(
-                    (states) => crosshairColor.withOpacity(0.5)),
-              ),
-              onPressed: widget.state.colorsSheetList.isNotEmpty
-                  ? () {
-                      Map<String, String> closestColor =
-                          ColorOperations.getClosestColor(
-                              color.hashCode.toRadixString(16), widget.state);
-
-                      widget.addColorController.sink.add(ColorsSheetItemEntity(
-                          code: closestColor.keys.first,
-                          name: closestColor.values.first));
-
-                      Fluttertoast.showToast(
-                        msg: "Color saved to favourites",
-                        backgroundColor: ColorOperations.codeToColor(
-                            closestColor.keys.first),
-                        textColor: crosshairColor,
-                        gravity: ToastGravity.TOP,
-                      );
-                    }
-                  : null,
-              child: Container(),
-            ),
-          ),
-        ),
+        _colorPreviewMainContainer(color, widget, crosshairColor),
+        _saveColorButtonHint(widget, crosshairColor),
+        _saveColorButton(color, widget, crosshairColor),
       ],
+    ),
+  );
+}
+
+Widget _colorPreviewMainContainer(
+    Color primaryColor, CameraViewWidget widget, Color crosshairColor) {
+  return Container(
+    color: primaryColor,
+    child: widget.state.colorsSheetList.isNotEmpty
+        ? Align(
+            alignment: Alignment.topCenter,
+            child: Column(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: _colorsInfoRow(primaryColor, widget),
+                ),
+                Expanded(
+                  flex: 4,
+                  child: _closestColorPreviewContainer(primaryColor, widget),
+                )
+              ],
+            ),
+          )
+        : FractionallySizedBox(
+            widthFactor: 0.2,
+            child: Align(
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: CircularProgressIndicator(
+                  color: crosshairColor,
+                ),
+              ),
+            ),
+          ),
+  );
+}
+
+Widget _saveColorButtonHint(CameraViewWidget widget, Color crosshairColor) {
+  return Align(
+    alignment: Alignment.topCenter,
+    child: FractionallySizedBox(
+      heightFactor: widget.state.colorsSheetList.isNotEmpty ? 0.8 : 0.2,
+      widthFactor: 0.6,
+      child: Center(
+        child: FittedBox(
+          fit: BoxFit.fitWidth,
+          child: Text(
+            widget.state.colorsSheetList.isNotEmpty
+                ? "Tap here to save the color"
+                : "Can not establish Internet connection.",
+            style: TextStyle(
+                inherit: false,
+                color: crosshairColor.withOpacity(0.7),
+                fontWeight: FontWeight.bold,
+                fontSize: 20.0),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+Widget _saveColorButton(
+    Color primaryColor, CameraViewWidget widget, Color crosshairColor) {
+  return Align(
+    alignment: Alignment.bottomCenter,
+    child: FractionallySizedBox(
+      heightFactor: 0.8,
+      child: TextButton(
+        style: ButtonStyle(
+          overlayColor: MaterialStateColor.resolveWith(
+              (states) => crosshairColor.withOpacity(0.5)),
+        ),
+        onPressed: widget.state.colorsSheetList.isNotEmpty
+            ? () {
+                Map<String, String> closestColor =
+                    ColorOperations.getClosestColor(
+                        primaryColor.hashCode.toRadixString(16), widget.state);
+
+                widget.addColorController.sink.add(ColorsSheetItemEntity(
+                    code: closestColor.keys.first,
+                    name: closestColor.values.first));
+
+                Fluttertoast.showToast(
+                  msg: "Color saved to favourites",
+                  backgroundColor:
+                      ColorOperations.codeToColor(closestColor.keys.first),
+                  textColor: crosshairColor,
+                  gravity: ToastGravity.TOP,
+                );
+              }
+            : null,
+        child: Container(),
+      ),
     ),
   );
 }
