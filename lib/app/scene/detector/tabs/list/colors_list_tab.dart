@@ -53,7 +53,6 @@ class ColorsListTab extends StatelessWidget {
     );
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
       color: position.isEven ? Colors.black12 : Colors.white,
       child: Column(
         children: [
@@ -80,26 +79,29 @@ class ColorsListTab extends StatelessWidget {
         overlayColor:
             MaterialStateColor.resolveWith((states) => Colors.black26),
       ),
-      child: Row(
-        children: [
-          _colorIcon(context, colorToSave),
-          Expanded(
-            flex: 4,
-            child: _colorCodeText(_colorsEntityList, index, textStyle),
-          ),
-          Expanded(
-            flex: 5,
-            child: _colorNameText(_colorsEntityList, index, textStyle),
-          ),
-          Expanded(
-            flex: 1,
-            child: _expandCardIcon(isCardOpened),
-          ),
-          Expanded(
-            flex: 1,
-            child: _deleteColorButton(context, removeFromFavourites, index),
-          ),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: Row(
+          children: [
+            _colorIcon(context, colorToSave),
+            Expanded(
+              flex: 4,
+              child: _colorCodeText(_colorsEntityList, index, textStyle),
+            ),
+            Expanded(
+              flex: 5,
+              child: _colorNameText(_colorsEntityList, index, textStyle),
+            ),
+            Expanded(
+              flex: 1,
+              child: _expandCardIcon(isCardOpened),
+            ),
+            Expanded(
+              flex: 1,
+              child: _deleteColorButton(context, removeFromFavourites, index),
+            ),
+          ],
+        ),
       ),
     );
   }

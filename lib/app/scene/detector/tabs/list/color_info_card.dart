@@ -27,12 +27,15 @@ class ColorInfoCardState extends State<ColorInfoCard> {
     Color invertedColor =
         ColorOperations.getExtremelyInvertedColor(previewColor);
 
-    return Column(
-      children: [
-        _colorPalette(),
-        ..._colorPreview(previewColor, invertedColor),
-        _convertedCodesPanel(previewColor),
-      ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Column(
+        children: [
+          _colorPalette(),
+          ..._colorPreview(previewColor, invertedColor),
+          _convertedCodesPanel(previewColor),
+        ],
+      ),
     );
   }
 
@@ -249,13 +252,17 @@ Widget _colorCodeRow(String code, bool maintainSize, ButtonStyle buttonStyle) {
     child: Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Text(
-          "#$code",
-          style: const TextStyle(
-            fontFeatures: [
-              FontFeature.tabularFigures(),
-            ],
-          ),
+        Row(
+          children: [
+            Text(
+              "#$code",
+              style: const TextStyle(
+                fontFeatures: [
+                  FontFeature.tabularFigures(),
+                ],
+              ),
+            ),
+          ],
         ),
         TextButton(
           style: buttonStyle,
