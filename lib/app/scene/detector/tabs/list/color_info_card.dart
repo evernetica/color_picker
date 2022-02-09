@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:color_picker/app/calculations/color_operations.dart';
 import 'package:color_picker/app/calculations/color_to_model.dart';
+import 'package:color_picker/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -279,7 +280,7 @@ Widget _colorCodeRow(String code, bool maintainSize, ButtonStyle buttonStyle) {
 void _copyHashCode(String code) {
   Clipboard.setData(ClipboardData(text: code));
 
-  Fluttertoast.showToast(msg: "Copied: $code");
+  Fluttertoast.showToast(msg: "${l10n?.copiedToClipboard} $code");
 }
 
 void _copyChannelsValues(List<int> channelsValues) {
@@ -292,7 +293,7 @@ void _copyChannelsValues(List<int> channelsValues) {
 
   Clipboard.setData(ClipboardData(text: text));
 
-  Fluttertoast.showToast(msg: "Copied: $text");
+  Fluttertoast.showToast(msg: "${l10n?.copiedToClipboard} $text");
 }
 
 String _getPercentsString(double value) {

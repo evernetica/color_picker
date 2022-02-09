@@ -2,6 +2,7 @@ import 'package:color_picker/app/scene/detector/cubit/detector_cubit.dart';
 import 'package:color_picker/app/scene/detector/cubit/detector_state.dart';
 import 'package:color_picker/app/scene/detector/tabs/camera/camera_tab.dart';
 import 'package:color_picker/app/scene/detector/tabs/list/colors_list_tab.dart';
+import 'package:color_picker/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -124,7 +125,7 @@ AppBar appBarListTab(TabController? controller) {
         ),
         child: const Icon(Icons.arrow_back)),
     backgroundColor: Colors.black,
-    title: const Text("Favourites"),
+    title: Text(l10n?.favouritesTitle ?? ""),
     flexibleSpace: Align(
       alignment: Alignment.bottomCenter,
       child: _tabIndicator(1),
@@ -148,12 +149,12 @@ Widget _popupMenuButton() {
         },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: const [
-            Icon(
+          children: [
+            const Icon(
               Icons.delete_sweep,
               color: Colors.black,
             ),
-            Text("Delete All"),
+            Text(l10n?.deleteAllButtonText ?? ""),
           ],
         ),
       ),

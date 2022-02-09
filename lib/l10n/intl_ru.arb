@@ -1,0 +1,11 @@
+{
+  "saveColorButtonHint": "Нажмите, чтобы сохранить цвет",
+  "saveColorButtonHintNoInternet": "Не удаётся подключиться к Интернету",
+  "favouritesTitle": "Избранное",
+  "deleteAllButtonText": "Удалить всё",
+  "emptyListPlaceholder": "Здесь ничего нет...",
+  "savedColorNameText": "Назв.:",
+  "savedColorCodeText": "Код:",
+  "copiedToClipboard": "Скопировано:",
+  "colorSavedMessage": "Цвет сохранён в \" Избранное\""
+}

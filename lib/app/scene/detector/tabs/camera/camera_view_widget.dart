@@ -176,7 +176,7 @@ Widget _colorPreview(
       fit: StackFit.expand,
       children: [
         _colorPreviewMainContainer(color, widget, crosshairColor),
-        _saveColorButtonHint(widget, crosshairColor),
+        _saveColorButtonHint(context, widget, crosshairColor),
         _saveColorButton(color, widget, crosshairColor),
       ],
     ),
@@ -217,7 +217,8 @@ Widget _colorPreviewMainContainer(
   );
 }
 
-Widget _saveColorButtonHint(CameraViewWidget widget, Color crosshairColor) {
+Widget _saveColorButtonHint(
+    BuildContext context, CameraViewWidget widget, Color crosshairColor) {
   return Align(
     alignment: Alignment.topCenter,
     child: FractionallySizedBox(
@@ -228,8 +229,8 @@ Widget _saveColorButtonHint(CameraViewWidget widget, Color crosshairColor) {
           fit: BoxFit.fitWidth,
           child: Text(
             widget.state.colorsSheetList.isNotEmpty
-                ? "Tap here to save the color"
-                : "Can not establish Internet connection.",
+                ? l10n?.saveColorButtonHint ?? ""
+                : l10n?.saveColorButtonHintNoInternet ?? "",
             style: TextStyle(
                 inherit: false,
                 color: crosshairColor.withOpacity(0.7),
@@ -264,7 +265,7 @@ Widget _saveColorButton(
                     name: closestColor.values.first));
 
                 Fluttertoast.showToast(
-                  msg: "Color saved to favourites",
+                  msg: l10n?.colorSavedMessage,
                   backgroundColor:
                       ColorOperations.codeToColor(closestColor.keys.first),
                   textColor: crosshairColor,

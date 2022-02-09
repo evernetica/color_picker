@@ -2,6 +2,7 @@ import 'package:color_picker/app/scene/detector/tabs/list/color_info_card.dart';
 import 'package:color_picker/app/scene/detector/tabs/list/cubit/colors_list_cubit.dart';
 import 'package:color_picker/app/scene/detector/tabs/list/cubit/colors_list_state.dart';
 import 'package:color_picker/domain/entities/colors_sheet_item_entity.dart';
+import 'package:color_picker/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -23,7 +24,7 @@ class ColorsListTab extends StatelessWidget {
         builder: (context, state) {
           return _colorsEntityList.isNotEmpty
               ? _favColorsListView(state)
-              : const Center(child: Text("Nothing here..."));
+              : Center(child: Text(l10n?.emptyListPlaceholder ?? ""));
         },
       ),
     );
@@ -118,7 +119,7 @@ Widget _colorIcon(BuildContext context, Color color) {
 Widget _colorCodeText(List<ColorsSheetItemEntity> colorsEntityList, int index,
     TextStyle textStyle) {
   return Text(
-    " code: #${colorsEntityList.elementAt(index).code} ",
+    " ${l10n?.savedColorCodeText} #${colorsEntityList.elementAt(index).code} ",
     style: textStyle,
   );
 }
@@ -126,7 +127,7 @@ Widget _colorCodeText(List<ColorsSheetItemEntity> colorsEntityList, int index,
 Widget _colorNameText(List<ColorsSheetItemEntity> colorsEntityList, int index,
     TextStyle textStyle) {
   return Text(
-    "name: ${colorsEntityList.elementAt(index).name}",
+    "${l10n?.savedColorNameText} ${colorsEntityList.elementAt(index).name}",
     style: textStyle,
   );
 }

@@ -15,6 +15,8 @@ late List<CameraDescription> cameras;
 late ColorsSheetListUseCase colorsSheetListUseCase;
 late FavouriteColorsFileUseCase favouriteColorsFileUseCase;
 
+dynamic l10n;
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
