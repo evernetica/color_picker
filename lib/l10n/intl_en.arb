@@ -1,0 +1,11 @@
+{
+  "saveColorButtonHint": "Tap here to save the color",
+  "saveColorButtonHintNoInternet": "Can't establish Internet connection.",
+  "favouritesTitle": "Favourites",
+  "deleteAllButtonText": "Delete All",
+  "emptyListPlaceholder": "Nothing here...",
+  "savedColorNameText": "Name:",
+  "savedColorCodeText": "Code:",
+  "copiedToClipboard": "Copied:",
+  "colorSavedMessage": "Color saved to favourites"
+}
