@@ -2,8 +2,9 @@
 
 ## App Demo
 
-<img src="https://github.com/Xapocc/color_picker/blob/master/color_picker.gif" height="360"/>
-
+| Color picking process: | Altering color: | 
+| --- | --- |
+| <img src="https://github.com/Xapocc/color_picker/blob/c59ec2c148cb48f67ce8af5bbf2145eb60dacc14/color_picker_gif_1.gif" height="360"/> | <img src="https://github.com/Xapocc/color_picker/blob/c59ec2c148cb48f67ce8af5bbf2145eb60dacc14/color_picker_gif_2.gif" height="360"/> |
 ## General Information
 
 Color picker allows you to know the code and the name of a color by pointing your phone's camera on
@@ -20,18 +21,23 @@ It also can save to favourites a color from this[^1] table that is closest to pi
 - Supports both iOS and Android
   > On iPhone 6-8 app uses low camera resolution to avoid memory shortage (
   flutter [issue #44436](https://github.com/flutter/flutter/issues/44436))
+- Supports English and Russian localisations
 - Identifies observed color's code in real-time
 - Tapping the bottom panel saves color to favourites list
-- Favourites list can be saved to device's memory
+- Favourites list is automatically saved to device's memory
   > Saved file can be found at "\*app_documents_directory\*/favouriteColors.json"
 - Crosshair is always visible due to using of inverted colors
 - Toast-notifications use picked color as background color and it's inversion for text color
+- Saved color can be altered and copied to clipboard
+  > You can copy color as values for four most popular color models (RGB, CMYK, LAB(daylight), HSV(HSB))
 
 ## Flutter Plugins Used[^2]:
 
 [^2]: Plugins' versions can be found
-at "https://github.com/Xapocc/color_picker/blob/master/pubspec.yaml"
+at "https://github.com/Xapocc/color_picker/blob/47ba28525217106ae9f475fbdfe78e01b599a783/pubspec.yaml"
 
+- auto_size_text
+- wakelock
 - fluttertoast
 - path_provider
 - device_info_plus
