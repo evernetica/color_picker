@@ -4,7 +4,7 @@
 
 | Color picking process: | Altering color: | 
 | --- | --- |
-| <img src="https://github.com/Xapocc/color_picker/blob/c59ec2c148cb48f67ce8af5bbf2145eb60dacc14/color_picker_gif_1.gif" height="360"/> | <img src="https://github.com/Xapocc/color_picker/blob/c59ec2c148cb48f67ce8af5bbf2145eb60dacc14/color_picker_gif_2.gif" height="360"/> |
+| <img src="color_picker_1.gif" height="360"/> | <img src="color_picker_2.gif" height="360"/> |
 ## General Information
 
 Color picker allows you to know the code and the name of a color by pointing your phone's camera on
@@ -34,7 +34,7 @@ It also can save to favourites a color from this[^1] table that is closest to pi
 ## Flutter Plugins Used[^2]:
 
 [^2]: Plugins' versions can be found
-at "https://github.com/Xapocc/color_picker/blob/47ba28525217106ae9f475fbdfe78e01b599a783/pubspec.yaml"
+at "[this](pubspec.yaml)"
 
 - auto_size_text
 - wakelock
